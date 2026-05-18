@@ -1,13 +1,66 @@
 // backend/services/scraper.js
-// Offline rent estimation algorithm covering 100% of Canadian postal codes
-// Based on actual market data from Rentals.ca, CMHC, and StatCan reports
+// Offline rent estimation algorithm – Ontario only
+// Based on CMHC, Rentals.ca, and local market data (2025–2026)
 
 // ============================================================
-// FULL CANADIAN RENT MAP (by Forward Sortation Area - FSA)
+// ONTARIO RENT MAP (by Forward Sortation Area - FSA)
 // ============================================================
 const rentMap = {
-  // Toronto Downtown (M4Y, M5B, M5C, M5E, M5G, M5H, M5J, M5K, M5L, M5M, M5N, M5P, M5R, M5S, M5T, M5V, M5W, M5X)
-  'M5V': { area: 'Downtown Toronto', province: 'ON', base1Bed: 2200, base2Bed: 2800, pricePerSqft: 3.5 },
+  // ===== WINDSOR / ESSEX COUNTY =====
+  // Windsor (N8N, N8P, N8R, N8S, N8T, N8W, N8X, N8Y, N9A, N9B, N9C, N9E, N9G, N9J, N9K, N9V, N9Y)
+  'N8N': { area: 'Windsor', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N8P': { area: 'Windsor', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N8R': { area: 'Windsor', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N8S': { area: 'Windsor', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N8T': { area: 'Windsor', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N8W': { area: 'Windsor', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N8X': { area: 'Windsor', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N8Y': { area: 'Windsor', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N9A': { area: 'Windsor', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N9B': { area: 'Windsor', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N9C': { area: 'Windsor', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N9E': { area: 'Windsor', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N9G': { area: 'Windsor', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N9J': { area: 'Windsor', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N9K': { area: 'Windsor', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N9V': { area: 'Windsor', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N9Y': { area: 'Windsor', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  
+  // ===== LEAMINGTON (N8H) =====
+  'N8H': { area: 'Leamington', province: 'ON', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
+  
+  // ===== CHATHAM (N7L, N7M, N7T) =====
+  'N7L': { area: 'Chatham', province: 'ON', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
+  'N7M': { area: 'Chatham', province: 'ON', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
+  'N7T': { area: 'Chatham', province: 'ON', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
+  
+  // ===== AMHERSTBURG (N9V) already included in Windsor, but we add specific =====
+  'N9V': { area: 'Amherstburg', province: 'ON', base1Bed: 1250, base2Bed: 1550, pricePerSqft: 1.8 },
+  
+  // ===== KINGSVILLE (N9Y) – also in Windsor, but refine =====
+  'N9Y': { area: 'Kingsville', province: 'ON', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
+  
+  // ===== TILBURY (N0P) =====
+  'N0P': { area: 'Tilbury', province: 'ON', base1Bed: 1100, base2Bed: 1400, pricePerSqft: 1.5 },
+  
+  // ===== LONDON (N5V, N5W, N5X, N5Y, N6A, N6B, N6C, N6E, N6G, N6H, N6K, N6L, N6M, N6N, N6P) =====
+  'N5V': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N5W': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N5X': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N5Y': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N6A': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N6B': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N6C': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N6E': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N6G': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N6H': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N6K': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N6L': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N6M': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N6N': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'N6P': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  
+  // ===== TORONTO DOWNTOWN =====
   'M5B': { area: 'Downtown Toronto', province: 'ON', base1Bed: 2200, base2Bed: 2800, pricePerSqft: 3.5 },
   'M5C': { area: 'Downtown Toronto', province: 'ON', base1Bed: 2200, base2Bed: 2800, pricePerSqft: 3.5 },
   'M5G': { area: 'Downtown Toronto', province: 'ON', base1Bed: 2200, base2Bed: 2800, pricePerSqft: 3.5 },
@@ -16,21 +69,26 @@ const rentMap = {
   'M5R': { area: 'Downtown Toronto', province: 'ON', base1Bed: 2200, base2Bed: 2800, pricePerSqft: 3.5 },
   'M5S': { area: 'Downtown Toronto', province: 'ON', base1Bed: 2200, base2Bed: 2800, pricePerSqft: 3.5 },
   'M5T': { area: 'Downtown Toronto', province: 'ON', base1Bed: 2200, base2Bed: 2800, pricePerSqft: 3.5 },
+  'M5V': { area: 'Downtown Toronto', province: 'ON', base1Bed: 2200, base2Bed: 2800, pricePerSqft: 3.5 },
   'M5W': { area: 'Downtown Toronto', province: 'ON', base1Bed: 2200, base2Bed: 2800, pricePerSqft: 3.5 },
+  
   // Toronto Midtown
   'M4P': { area: 'Toronto Midtown', province: 'ON', base1Bed: 1950, base2Bed: 2500, pricePerSqft: 3.0 },
   'M4R': { area: 'Toronto Midtown', province: 'ON', base1Bed: 1950, base2Bed: 2500, pricePerSqft: 3.0 },
   'M4S': { area: 'Toronto Midtown', province: 'ON', base1Bed: 1950, base2Bed: 2500, pricePerSqft: 3.0 },
   'M4T': { area: 'Toronto Midtown', province: 'ON', base1Bed: 1950, base2Bed: 2500, pricePerSqft: 3.0 },
   'M4V': { area: 'Toronto Midtown', province: 'ON', base1Bed: 1950, base2Bed: 2500, pricePerSqft: 3.0 },
+  
   // Toronto West
   'M6G': { area: 'Toronto West', province: 'ON', base1Bed: 1750, base2Bed: 2300, pricePerSqft: 2.6 },
   'M6H': { area: 'Toronto West', province: 'ON', base1Bed: 1750, base2Bed: 2300, pricePerSqft: 2.6 },
   'M6J': { area: 'Toronto West', province: 'ON', base1Bed: 1750, base2Bed: 2300, pricePerSqft: 2.6 },
   'M6K': { area: 'Toronto West', province: 'ON', base1Bed: 1750, base2Bed: 2300, pricePerSqft: 2.6 },
+  
   // Toronto East
-  'M4E': { area: 'Toronto East', province: 'ON', base1Bed: 1650, base2Bed: 2100, pricePerSqft: 2.4 },
   'M4C': { area: 'Toronto East', province: 'ON', base1Bed: 1650, base2Bed: 2100, pricePerSqft: 2.4 },
+  'M4E': { area: 'Toronto East', province: 'ON', base1Bed: 1650, base2Bed: 2100, pricePerSqft: 2.4 },
+  
   // Mississauga
   'L4W': { area: 'Mississauga', province: 'ON', base1Bed: 1500, base2Bed: 1950, pricePerSqft: 2.2 },
   'L5A': { area: 'Mississauga', province: 'ON', base1Bed: 1500, base2Bed: 1950, pricePerSqft: 2.2 },
@@ -38,17 +96,20 @@ const rentMap = {
   'L5C': { area: 'Mississauga', province: 'ON', base1Bed: 1500, base2Bed: 1950, pricePerSqft: 2.2 },
   'L5K': { area: 'Mississauga', province: 'ON', base1Bed: 1500, base2Bed: 1950, pricePerSqft: 2.2 },
   'L5M': { area: 'Mississauga', province: 'ON', base1Bed: 1500, base2Bed: 1950, pricePerSqft: 2.2 },
+  
   // Brampton
   'L6S': { area: 'Brampton', province: 'ON', base1Bed: 1300, base2Bed: 1700, pricePerSqft: 1.9 },
   'L6T': { area: 'Brampton', province: 'ON', base1Bed: 1300, base2Bed: 1700, pricePerSqft: 1.9 },
   'L6V': { area: 'Brampton', province: 'ON', base1Bed: 1300, base2Bed: 1700, pricePerSqft: 1.9 },
   'L6W': { area: 'Brampton', province: 'ON', base1Bed: 1300, base2Bed: 1700, pricePerSqft: 1.9 },
   'L6Z': { area: 'Brampton', province: 'ON', base1Bed: 1300, base2Bed: 1700, pricePerSqft: 1.9 },
+  
   // Oakville
   'L6H': { area: 'Oakville', province: 'ON', base1Bed: 1550, base2Bed: 2000, pricePerSqft: 2.3 },
   'L6J': { area: 'Oakville', province: 'ON', base1Bed: 1550, base2Bed: 2000, pricePerSqft: 2.3 },
   'L6K': { area: 'Oakville', province: 'ON', base1Bed: 1550, base2Bed: 2000, pricePerSqft: 2.3 },
   'L6M': { area: 'Oakville', province: 'ON', base1Bed: 1550, base2Bed: 2000, pricePerSqft: 2.3 },
+  
   // Markham
   'L3R': { area: 'Markham', province: 'ON', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
   'L3S': { area: 'Markham', province: 'ON', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
@@ -56,36 +117,25 @@ const rentMap = {
   'L6B': { area: 'Markham', province: 'ON', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
   'L6C': { area: 'Markham', province: 'ON', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
   'L6E': { area: 'Markham', province: 'ON', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
+  
   // Vaughan
   'L4K': { area: 'Vaughan', province: 'ON', base1Bed: 1550, base2Bed: 2000, pricePerSqft: 2.2 },
   'L4L': { area: 'Vaughan', province: 'ON', base1Bed: 1550, base2Bed: 2000, pricePerSqft: 2.2 },
   'L6A': { area: 'Vaughan', province: 'ON', base1Bed: 1550, base2Bed: 2000, pricePerSqft: 2.2 },
+  
   // Richmond Hill
   'L4B': { area: 'Richmond Hill', province: 'ON', base1Bed: 1550, base2Bed: 2000, pricePerSqft: 2.2 },
   'L4C': { area: 'Richmond Hill', province: 'ON', base1Bed: 1550, base2Bed: 2000, pricePerSqft: 2.2 },
   'L4E': { area: 'Richmond Hill', province: 'ON', base1Bed: 1550, base2Bed: 2000, pricePerSqft: 2.2 },
-  // Waterloo
+  
+  // Waterloo Region (Kitchener-Waterloo-Cambridge)
   'N2J': { area: 'Waterloo', province: 'ON', base1Bed: 1400, base2Bed: 1800, pricePerSqft: 2.0 },
   'N2L': { area: 'Waterloo', province: 'ON', base1Bed: 1400, base2Bed: 1800, pricePerSqft: 2.0 },
   'N2M': { area: 'Waterloo', province: 'ON', base1Bed: 1400, base2Bed: 1800, pricePerSqft: 2.0 },
   'N2N': { area: 'Waterloo', province: 'ON', base1Bed: 1400, base2Bed: 1800, pricePerSqft: 2.0 },
   'N2T': { area: 'Waterloo', province: 'ON', base1Bed: 1400, base2Bed: 1800, pricePerSqft: 2.0 },
   'N2V': { area: 'Waterloo', province: 'ON', base1Bed: 1400, base2Bed: 1800, pricePerSqft: 2.0 },
-  // London
-  'N6A': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'N6B': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'N6C': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'N6G': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'N6H': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'N6K': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'N6L': { area: 'London', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  // Ottawa
-  'K1N': { area: 'Ottawa Downtown', province: 'ON', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.4 },
-  'K1P': { area: 'Ottawa Downtown', province: 'ON', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.4 },
-  'K1R': { area: 'Ottawa Downtown', province: 'ON', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.4 },
-  'K1S': { area: 'Ottawa Downtown', province: 'ON', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.4 },
-  'K1Y': { area: 'Ottawa Downtown', province: 'ON', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.4 },
-  'K1Z': { area: 'Ottawa Downtown', province: 'ON', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.4 },
+  
   // Hamilton
   'L8N': { area: 'Hamilton', province: 'ON', base1Bed: 1400, base2Bed: 1800, pricePerSqft: 2.0 },
   'L8P': { area: 'Hamilton', province: 'ON', base1Bed: 1400, base2Bed: 1800, pricePerSqft: 2.0 },
@@ -93,286 +143,77 @@ const rentMap = {
   'L8T': { area: 'Hamilton', province: 'ON', base1Bed: 1400, base2Bed: 1800, pricePerSqft: 2.0 },
   'L8V': { area: 'Hamilton', province: 'ON', base1Bed: 1400, base2Bed: 1800, pricePerSqft: 2.0 },
   'L8W': { area: 'Hamilton', province: 'ON', base1Bed: 1400, base2Bed: 1800, pricePerSqft: 2.0 },
-  // Vancouver
-  'V6A': { area: 'Vancouver', province: 'BC', base1Bed: 2350, base2Bed: 3100, pricePerSqft: 3.8 },
-  'V6B': { area: 'Vancouver', province: 'BC', base1Bed: 2350, base2Bed: 3100, pricePerSqft: 3.8 },
-  'V6C': { area: 'Vancouver', province: 'BC', base1Bed: 2350, base2Bed: 3100, pricePerSqft: 3.8 },
-  'V6E': { area: 'Vancouver', province: 'BC', base1Bed: 2350, base2Bed: 3100, pricePerSqft: 3.8 },
-  'V6G': { area: 'Vancouver', province: 'BC', base1Bed: 2350, base2Bed: 3100, pricePerSqft: 3.8 },
-  'V6H': { area: 'Vancouver', province: 'BC', base1Bed: 2350, base2Bed: 3100, pricePerSqft: 3.8 },
-  'V6J': { area: 'Vancouver', province: 'BC', base1Bed: 2350, base2Bed: 3100, pricePerSqft: 3.8 },
-  'V6K': { area: 'Vancouver', province: 'BC', base1Bed: 2350, base2Bed: 3100, pricePerSqft: 3.8 },
-  'V6Z': { area: 'Vancouver', province: 'BC', base1Bed: 2350, base2Bed: 3100, pricePerSqft: 3.8 },
-  // Surrey
-  'V3S': { area: 'Surrey', province: 'BC', base1Bed: 1650, base2Bed: 2100, pricePerSqft: 2.4 },
-  'V3T': { area: 'Surrey', province: 'BC', base1Bed: 1650, base2Bed: 2100, pricePerSqft: 2.4 },
-  'V3V': { area: 'Surrey', province: 'BC', base1Bed: 1650, base2Bed: 2100, pricePerSqft: 2.4 },
-  'V3W': { area: 'Surrey', province: 'BC', base1Bed: 1650, base2Bed: 2100, pricePerSqft: 2.4 },
-  'V3X': { area: 'Surrey', province: 'BC', base1Bed: 1650, base2Bed: 2100, pricePerSqft: 2.4 },
-  // Burnaby
-  'V5A': { area: 'Burnaby', province: 'BC', base1Bed: 1950, base2Bed: 2500, pricePerSqft: 3.0 },
-  'V5B': { area: 'Burnaby', province: 'BC', base1Bed: 1950, base2Bed: 2500, pricePerSqft: 3.0 },
-  'V5C': { area: 'Burnaby', province: 'BC', base1Bed: 1950, base2Bed: 2500, pricePerSqft: 3.0 },
-  'V5E': { area: 'Burnaby', province: 'BC', base1Bed: 1950, base2Bed: 2500, pricePerSqft: 3.0 },
-  'V5G': { area: 'Burnaby', province: 'BC', base1Bed: 1950, base2Bed: 2500, pricePerSqft: 3.0 },
-  'V5H': { area: 'Burnaby', province: 'BC', base1Bed: 1950, base2Bed: 2500, pricePerSqft: 3.0 },
-  'V5J': { area: 'Burnaby', province: 'BC', base1Bed: 1950, base2Bed: 2500, pricePerSqft: 3.0 },
-  // Richmond BC
-  'V6X': { area: 'Richmond BC', province: 'BC', base1Bed: 2050, base2Bed: 2600, pricePerSqft: 3.2 },
-  'V6Y': { area: 'Richmond BC', province: 'BC', base1Bed: 2050, base2Bed: 2600, pricePerSqft: 3.2 },
-  'V7A': { area: 'Richmond BC', province: 'BC', base1Bed: 2050, base2Bed: 2600, pricePerSqft: 3.2 },
-  'V7B': { area: 'Richmond BC', province: 'BC', base1Bed: 2050, base2Bed: 2600, pricePerSqft: 3.2 },
-  'V7C': { area: 'Richmond BC', province: 'BC', base1Bed: 2050, base2Bed: 2600, pricePerSqft: 3.2 },
-  'V7E': { area: 'Richmond BC', province: 'BC', base1Bed: 2050, base2Bed: 2600, pricePerSqft: 3.2 },
-  // Victoria
-  'V8T': { area: 'Victoria', province: 'BC', base1Bed: 1800, base2Bed: 2400, pricePerSqft: 2.7 },
-  'V8V': { area: 'Victoria', province: 'BC', base1Bed: 1800, base2Bed: 2400, pricePerSqft: 2.7 },
-  'V8W': { area: 'Victoria', province: 'BC', base1Bed: 1800, base2Bed: 2400, pricePerSqft: 2.7 },
-  'V8X': { area: 'Victoria', province: 'BC', base1Bed: 1800, base2Bed: 2400, pricePerSqft: 2.7 },
-  'V8Z': { area: 'Victoria', province: 'BC', base1Bed: 1800, base2Bed: 2400, pricePerSqft: 2.7 },
-  'V9A': { area: 'Victoria', province: 'BC', base1Bed: 1800, base2Bed: 2400, pricePerSqft: 2.7 },
-  'V9B': { area: 'Victoria', province: 'BC', base1Bed: 1800, base2Bed: 2400, pricePerSqft: 2.7 },
-  // Kelowna
-  'V1X': { area: 'Kelowna', province: 'BC', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.4 },
-  'V1Y': { area: 'Kelowna', province: 'BC', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.4 },
-  // Calgary
-  'T2A': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T2B': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T2C': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T2E': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T2G': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T2H': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T2J': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T2K': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T2L': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T2M': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T2N': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T2P': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T2R': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T2S': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T2T': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T2W': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T2X': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T2Y': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T2Z': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T3A': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T3B': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T3C': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T3E': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T3G': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T3H': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T3J': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T3K': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T3L': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T3M': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T3N': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T3P': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T3R': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  'T3S': { area: 'Calgary', province: 'AB', base1Bed: 1450, base2Bed: 1900, pricePerSqft: 2.1 },
-  // Edmonton
-  'T5A': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T5B': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T5C': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T5E': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T5G': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T5H': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T5J': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T5K': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T5L': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T5M': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T5N': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T5P': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T5R': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T5S': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T5T': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T5V': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T5W': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T5X': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T5Y': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T6A': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T6B': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T6C': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T6E': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T6G': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T6H': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T6J': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T6K': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T6L': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T6M': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T6N': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T6P': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T6R': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T6T': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T6V': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T6W': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T6X': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  'T6Y': { area: 'Edmonton', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-  // Winnipeg
-  'R2C': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R2G': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R2H': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R2J': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R2K': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R2L': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R2M': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R2N': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R2P': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R2R': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R2V': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R2W': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R2X': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R2Y': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R3A': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R3B': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R3C': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R3E': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R3G': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R3H': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R3J': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R3K': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R3L': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R3M': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R3N': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R3P': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R3R': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R3S': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R3T': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R3V': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R3W': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R3X': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  'R3Y': { area: 'Winnipeg', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-  // Montreal
-  'H2Y': { area: 'Montreal', province: 'QC', base1Bed: 1700, base2Bed: 2200, pricePerSqft: 2.5 },
-  'H2Z': { area: 'Montreal', province: 'QC', base1Bed: 1700, base2Bed: 2200, pricePerSqft: 2.5 },
-  'H3A': { area: 'Montreal', province: 'QC', base1Bed: 1700, base2Bed: 2200, pricePerSqft: 2.5 },
-  'H3B': { area: 'Montreal', province: 'QC', base1Bed: 1700, base2Bed: 2200, pricePerSqft: 2.5 },
-  'H3C': { area: 'Montreal', province: 'QC', base1Bed: 1700, base2Bed: 2200, pricePerSqft: 2.5 },
-  'H3G': { area: 'Montreal', province: 'QC', base1Bed: 1700, base2Bed: 2200, pricePerSqft: 2.5 },
-  'H3H': { area: 'Montreal', province: 'QC', base1Bed: 1700, base2Bed: 2200, pricePerSqft: 2.5 },
-  'H3J': { area: 'Montreal', province: 'QC', base1Bed: 1700, base2Bed: 2200, pricePerSqft: 2.5 },
-  'H3K': { area: 'Montreal', province: 'QC', base1Bed: 1700, base2Bed: 2200, pricePerSqft: 2.5 },
-  'H3L': { area: 'Montreal', province: 'QC', base1Bed: 1700, base2Bed: 2200, pricePerSqft: 2.5 },
-  'H3R': { area: 'Montreal', province: 'QC', base1Bed: 1700, base2Bed: 2200, pricePerSqft: 2.5 },
-  'H3S': { area: 'Montreal', province: 'QC', base1Bed: 1700, base2Bed: 2200, pricePerSqft: 2.5 },
-  'H3T': { area: 'Montreal', province: 'QC', base1Bed: 1700, base2Bed: 2200, pricePerSqft: 2.5 },
-  'H3V': { area: 'Montreal', province: 'QC', base1Bed: 1700, base2Bed: 2200, pricePerSqft: 2.5 },
-  'H3W': { area: 'Montreal', province: 'QC', base1Bed: 1700, base2Bed: 2200, pricePerSqft: 2.5 },
-  'H3X': { area: 'Montreal', province: 'QC', base1Bed: 1700, base2Bed: 2200, pricePerSqft: 2.5 },
-  'H3Y': { area: 'Montreal', province: 'QC', base1Bed: 1700, base2Bed: 2200, pricePerSqft: 2.5 },
-  'H3Z': { area: 'Montreal', province: 'QC', base1Bed: 1700, base2Bed: 2200, pricePerSqft: 2.5 },
-  // Quebec City
-  'G1R': { area: 'Quebec City', province: 'QC', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
-  'G1S': { area: 'Quebec City', province: 'QC', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
-  'G1T': { area: 'Quebec City', province: 'QC', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
-  'G1V': { area: 'Quebec City', province: 'QC', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
-  'G1W': { area: 'Quebec City', province: 'QC', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
-  'G1X': { area: 'Quebec City', province: 'QC', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
-  // Newfoundland & Labrador
-  'A1A': { area: "St. John's", province: 'NL', base1Bed: 1050, base2Bed: 1350, pricePerSqft: 1.5 },
-  'A1B': { area: "St. John's", province: 'NL', base1Bed: 1050, base2Bed: 1350, pricePerSqft: 1.5 },
-  'A1C': { area: "St. John's", province: 'NL', base1Bed: 1050, base2Bed: 1350, pricePerSqft: 1.5 },
-  'A1E': { area: "St. John's", province: 'NL', base1Bed: 1050, base2Bed: 1350, pricePerSqft: 1.5 },
-  'A1G': { area: "St. John's", province: 'NL', base1Bed: 1050, base2Bed: 1350, pricePerSqft: 1.5 },
-  'A1H': { area: "St. John's", province: 'NL', base1Bed: 1050, base2Bed: 1350, pricePerSqft: 1.5 },
-  'A1K': { area: "St. John's", province: 'NL', base1Bed: 1050, base2Bed: 1350, pricePerSqft: 1.5 },
-  'A1L': { area: "St. John's", province: 'NL', base1Bed: 1050, base2Bed: 1350, pricePerSqft: 1.5 },
-  'A1M': { area: "St. John's", province: 'NL', base1Bed: 1050, base2Bed: 1350, pricePerSqft: 1.5 },
-  'A1N': { area: "St. John's", province: 'NL', base1Bed: 1050, base2Bed: 1350, pricePerSqft: 1.5 },
-  'A1S': { area: "St. John's", province: 'NL', base1Bed: 1050, base2Bed: 1350, pricePerSqft: 1.5 },
-  'A1W': { area: "St. John's", province: 'NL', base1Bed: 1050, base2Bed: 1350, pricePerSqft: 1.5 },
-  // Nova Scotia
-  'B3H': { area: 'Halifax', province: 'NS', base1Bed: 1750, base2Bed: 2300, pricePerSqft: 2.6 },
-  'B3J': { area: 'Halifax', province: 'NS', base1Bed: 1750, base2Bed: 2300, pricePerSqft: 2.6 },
-  'B3K': { area: 'Halifax', province: 'NS', base1Bed: 1750, base2Bed: 2300, pricePerSqft: 2.6 },
-  'B3L': { area: 'Halifax', province: 'NS', base1Bed: 1750, base2Bed: 2300, pricePerSqft: 2.6 },
-  'B3M': { area: 'Halifax', province: 'NS', base1Bed: 1750, base2Bed: 2300, pricePerSqft: 2.6 },
-  'B3N': { area: 'Halifax', province: 'NS', base1Bed: 1750, base2Bed: 2300, pricePerSqft: 2.6 },
-  'B3R': { area: 'Halifax', province: 'NS', base1Bed: 1750, base2Bed: 2300, pricePerSqft: 2.6 },
-  'B3S': { area: 'Halifax', province: 'NS', base1Bed: 1750, base2Bed: 2300, pricePerSqft: 2.6 },
-  'B3T': { area: 'Halifax', province: 'NS', base1Bed: 1750, base2Bed: 2300, pricePerSqft: 2.6 },
-  'B3V': { area: 'Halifax', province: 'NS', base1Bed: 1750, base2Bed: 2300, pricePerSqft: 2.6 },
-  'B3W': { area: 'Halifax', province: 'NS', base1Bed: 1750, base2Bed: 2300, pricePerSqft: 2.6 },
-  'B3X': { area: 'Halifax', province: 'NS', base1Bed: 1750, base2Bed: 2300, pricePerSqft: 2.6 },
-  'B3Y': { area: 'Halifax', province: 'NS', base1Bed: 1750, base2Bed: 2300, pricePerSqft: 2.6 },
-  'B3Z': { area: 'Halifax', province: 'NS', base1Bed: 1750, base2Bed: 2300, pricePerSqft: 2.6 },
-  // New Brunswick
-  'E2A': { area: 'Moncton', province: 'NB', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'E2B': { area: 'Moncton', province: 'NB', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'E2C': { area: 'Moncton', province: 'NB', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'E2E': { area: 'Moncton', province: 'NB', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'E2G': { area: 'Moncton', province: 'NB', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'E2H': { area: 'Moncton', province: 'NB', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'E2J': { area: 'Moncton', province: 'NB', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'E2K': { area: 'Moncton', province: 'NB', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'E2L': { area: 'Moncton', province: 'NB', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'E2M': { area: 'Moncton', province: 'NB', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'E2N': { area: 'Moncton', province: 'NB', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'E2P': { area: 'Moncton', province: 'NB', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'E2R': { area: 'Moncton', province: 'NB', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  // Saskatchewan
-  'S4N': { area: 'Regina', province: 'SK', base1Bed: 1100, base2Bed: 1400, pricePerSqft: 1.5 },
-  'S4P': { area: 'Regina', province: 'SK', base1Bed: 1100, base2Bed: 1400, pricePerSqft: 1.5 },
-  'S4R': { area: 'Regina', province: 'SK', base1Bed: 1100, base2Bed: 1400, pricePerSqft: 1.5 },
-  'S4S': { area: 'Regina', province: 'SK', base1Bed: 1100, base2Bed: 1400, pricePerSqft: 1.5 },
-  'S4T': { area: 'Regina', province: 'SK', base1Bed: 1100, base2Bed: 1400, pricePerSqft: 1.5 },
-  'S4V': { area: 'Regina', province: 'SK', base1Bed: 1100, base2Bed: 1400, pricePerSqft: 1.5 },
-  'S4W': { area: 'Regina', province: 'SK', base1Bed: 1100, base2Bed: 1400, pricePerSqft: 1.5 },
-  'S4X': { area: 'Regina', province: 'SK', base1Bed: 1100, base2Bed: 1400, pricePerSqft: 1.5 },
-  'S4Y': { area: 'Regina', province: 'SK', base1Bed: 1100, base2Bed: 1400, pricePerSqft: 1.5 },
-  'S4Z': { area: 'Regina', province: 'SK', base1Bed: 1100, base2Bed: 1400, pricePerSqft: 1.5 },
-  'S7K': { area: 'Saskatoon', province: 'SK', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'S7L': { area: 'Saskatoon', province: 'SK', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'S7M': { area: 'Saskatoon', province: 'SK', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'S7N': { area: 'Saskatoon', province: 'SK', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'S7P': { area: 'Saskatoon', province: 'SK', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'S7R': { area: 'Saskatoon', province: 'SK', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'S7S': { area: 'Saskatoon', province: 'SK', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'S7T': { area: 'Saskatoon', province: 'SK', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  'S7V': { area: 'Saskatoon', province: 'SK', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-  // Alberta (Lethbridge, etc.)
-  'T1A': { area: 'Lethbridge', province: 'AB', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
-  'T1B': { area: 'Lethbridge', province: 'AB', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
-  'T1C': { area: 'Lethbridge', province: 'AB', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
-  'T1E': { area: 'Lethbridge', province: 'AB', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
-  'T1G': { area: 'Lethbridge', province: 'AB', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
-  'T1H': { area: 'Lethbridge', province: 'AB', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
-  'T1J': { area: 'Lethbridge', province: 'AB', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
-  'T1K': { area: 'Lethbridge', province: 'AB', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
-  'T1L': { area: 'Lethbridge', province: 'AB', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
-  'T1M': { area: 'Lethbridge', province: 'AB', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
-  // NWT / Yukon / Nunavut
-  'X0A': { area: 'Yellowknife/NWT', province: 'NT', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.4 },
-  'X0E': { area: 'Yellowknife/NWT', province: 'NT', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.4 },
-  'X0G': { area: 'Yellowknife/NWT', province: 'NT', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.4 },
-  'Y0A': { area: 'Whitehorse', province: 'YT', base1Bed: 1500, base2Bed: 1950, pricePerSqft: 2.2 },
-  'Y0B': { area: 'Whitehorse', province: 'YT', base1Bed: 1500, base2Bed: 1950, pricePerSqft: 2.2 }
+  
+  // Ottawa
+  'K1N': { area: 'Ottawa Downtown', province: 'ON', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.4 },
+  'K1P': { area: 'Ottawa Downtown', province: 'ON', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.4 },
+  'K1R': { area: 'Ottawa Downtown', province: 'ON', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.4 },
+  'K1S': { area: 'Ottawa Downtown', province: 'ON', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.4 },
+  'K1Y': { area: 'Ottawa Downtown', province: 'ON', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.4 },
+  'K1Z': { area: 'Ottawa Downtown', province: 'ON', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.4 },
+  
+  // St. Catharines / Niagara
+  'L2M': { area: 'St. Catharines', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'L2N': { area: 'St. Catharines', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'L2P': { area: 'St. Catharines', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'L2R': { area: 'St. Catharines', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'L2S': { area: 'St. Catharines', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'L2T': { area: 'St. Catharines', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'L2V': { area: 'St. Catharines', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'L2W': { area: 'St. Catharines', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  
+  // Barrie
+  'L4M': { area: 'Barrie', province: 'ON', base1Bed: 1550, base2Bed: 2000, pricePerSqft: 2.2 },
+  'L4N': { area: 'Barrie', province: 'ON', base1Bed: 1550, base2Bed: 2000, pricePerSqft: 2.2 },
+  'L4V': { area: 'Barrie', province: 'ON', base1Bed: 1550, base2Bed: 2000, pricePerSqft: 2.2 },
+  'L9J': { area: 'Barrie', province: 'ON', base1Bed: 1550, base2Bed: 2000, pricePerSqft: 2.2 },
+  
+  // Guelph
+  'N1E': { area: 'Guelph', province: 'ON', base1Bed: 1500, base2Bed: 1950, pricePerSqft: 2.1 },
+  'N1G': { area: 'Guelph', province: 'ON', base1Bed: 1500, base2Bed: 1950, pricePerSqft: 2.1 },
+  'N1H': { area: 'Guelph', province: 'ON', base1Bed: 1500, base2Bed: 1950, pricePerSqft: 2.1 },
+  'N1K': { area: 'Guelph', province: 'ON', base1Bed: 1500, base2Bed: 1950, pricePerSqft: 2.1 },
+  'N1L': { area: 'Guelph', province: 'ON', base1Bed: 1500, base2Bed: 1950, pricePerSqft: 2.1 },
+  
+  // Kingston
+  'K7K': { area: 'Kingston', province: 'ON', base1Bed: 1450, base2Bed: 1850, pricePerSqft: 2.0 },
+  'K7L': { area: 'Kingston', province: 'ON', base1Bed: 1450, base2Bed: 1850, pricePerSqft: 2.0 },
+  'K7M': { area: 'Kingston', province: 'ON', base1Bed: 1450, base2Bed: 1850, pricePerSqft: 2.0 },
+  'K7P': { area: 'Kingston', province: 'ON', base1Bed: 1450, base2Bed: 1850, pricePerSqft: 2.0 },
+  
+  // Peterborough
+  'K9H': { area: 'Peterborough', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'K9J': { area: 'Peterborough', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'K9K': { area: 'Peterborough', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  'K9L': { area: 'Peterborough', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+  
+  // Sudbury
+  'P3A': { area: 'Sudbury', province: 'ON', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
+  'P3B': { area: 'Sudbury', province: 'ON', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
+  'P3C': { area: 'Sudbury', province: 'ON', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
+  'P3E': { area: 'Sudbury', province: 'ON', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
+  'P3G': { area: 'Sudbury', province: 'ON', base1Bed: 1250, base2Bed: 1600, pricePerSqft: 1.8 },
+  
+  // Thunder Bay
+  'P7A': { area: 'Thunder Bay', province: 'ON', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
+  'P7B': { area: 'Thunder Bay', province: 'ON', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
+  'P7C': { area: 'Thunder Bay', province: 'ON', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
+  'P7E': { area: 'Thunder Bay', province: 'ON', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
+  'P7G': { area: 'Thunder Bay', province: 'ON', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 }
 };
 
 // ============================================================
-// DEFAULT FALLBACK BY PROVINCE FIRST LETTER
+// ONTARIO DEFAULT FALLBACK (for any postal code starting with K, L, M, N, P)
 // ============================================================
-function getDefaultRegion(firstLetter) {
-  const defaultRents = {
-    'A': { area: 'Newfoundland', province: 'NL', base1Bed: 1050, base2Bed: 1350, pricePerSqft: 1.5 },
-    'B': { area: 'Nova Scotia', province: 'NS', base1Bed: 1400, base2Bed: 1800, pricePerSqft: 2.0 },
-    'C': { area: 'Prince Edward Island', province: 'PE', base1Bed: 1200, base2Bed: 1550, pricePerSqft: 1.7 },
-    'E': { area: 'New Brunswick', province: 'NB', base1Bed: 1150, base2Bed: 1450, pricePerSqft: 1.6 },
-    'G': { area: 'Quebec', province: 'QC', base1Bed: 1400, base2Bed: 1800, pricePerSqft: 2.0 },
-    'H': { area: 'Quebec', province: 'QC', base1Bed: 1400, base2Bed: 1800, pricePerSqft: 2.0 },
-    'J': { area: 'Quebec', province: 'QC', base1Bed: 1400, base2Bed: 1800, pricePerSqft: 2.0 },
-    'K': { area: 'Ontario', province: 'ON', base1Bed: 1500, base2Bed: 1950, pricePerSqft: 2.1 },
-    'L': { area: 'Ontario', province: 'ON', base1Bed: 1500, base2Bed: 1950, pricePerSqft: 2.1 },
-    'M': { area: 'Ontario', province: 'ON', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.3 },
-    'N': { area: 'Ontario', province: 'ON', base1Bed: 1400, base2Bed: 1800, pricePerSqft: 2.0 },
-    'P': { area: 'Ontario', province: 'ON', base1Bed: 1400, base2Bed: 1800, pricePerSqft: 2.0 },
-    'R': { area: 'Manitoba', province: 'MB', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 },
-    'S': { area: 'Saskatchewan', province: 'SK', base1Bed: 1100, base2Bed: 1400, pricePerSqft: 1.6 },
-    'T': { area: 'Alberta', province: 'AB', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
-    'V': { area: 'British Columbia', province: 'BC', base1Bed: 1800, base2Bed: 2400, pricePerSqft: 2.7 },
-    'X': { area: 'Northwest Territories', province: 'NT', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.4 },
-    'Y': { area: 'Yukon', province: 'YT', base1Bed: 1500, base2Bed: 1950, pricePerSqft: 2.2 }
+function getOntarioDefault(firstLetter) {
+  const defaults = {
+    'K': { area: 'Eastern Ontario', province: 'ON', base1Bed: 1450, base2Bed: 1850, pricePerSqft: 2.0 },
+    'L': { area: 'Central Ontario', province: 'ON', base1Bed: 1500, base2Bed: 1950, pricePerSqft: 2.1 },
+    'M': { area: 'Toronto Area', province: 'ON', base1Bed: 1800, base2Bed: 2300, pricePerSqft: 2.6 },
+    'N': { area: 'Southwestern Ontario', province: 'ON', base1Bed: 1350, base2Bed: 1700, pricePerSqft: 1.9 },
+    'P': { area: 'Northern Ontario', province: 'ON', base1Bed: 1200, base2Bed: 1500, pricePerSqft: 1.7 }
   };
-  return defaultRents[firstLetter] || { area: 'Your Area', province: 'ON', base1Bed: 1600, base2Bed: 2100, pricePerSqft: 2.3 };
+  return defaults[firstLetter] || { area: 'Ontario', province: 'ON', base1Bed: 1400, base2Bed: 1800, pricePerSqft: 2.0 };
 }
 
 // ============================================================
@@ -448,15 +289,21 @@ function calculateRentEstimate(userInput, regionData) {
 // MAIN EXPORTED FUNCTION
 // ============================================================
 async function getEstimateFromPublicData({ address, postal, bedrooms, sqft, propertyType, bathrooms, levels, parking }) {
-  // Extract first 3 characters of postal code (ignore spaces)
-  let postalPrefix = postal ? postal.replace(/\s/g, '').substring(0, 3) : 'M5V';
+  // Extract first 3 characters of postal code (ignore spaces) – only Ontario
+  let postalPrefix = postal ? postal.replace(/\s/g, '').substring(0, 3) : 'N5V';
   const fsaKey = postalPrefix.toUpperCase();
   
   // Look up region data
   let regionData = rentMap[fsaKey];
   if (!regionData) {
     const firstLetter = postalPrefix.charAt(0).toUpperCase();
-    regionData = getDefaultRegion(firstLetter);
+    // For Ontario, only letters K, L, M, N, P are valid. Anything else falls back to default Ontario.
+    if (['K','L','M','N','P'].includes(firstLetter)) {
+      regionData = getOntarioDefault(firstLetter);
+    } else {
+      // If postal code starts with anything else (shouldn't happen for Ontario, but fallback)
+      regionData = { area: 'Ontario', province: 'ON', base1Bed: 1400, base2Bed: 1800, pricePerSqft: 2.0 };
+    }
   }
   
   // Prepare user input object
@@ -471,7 +318,7 @@ async function getEstimateFromPublicData({ address, postal, bedrooms, sqft, prop
   
   const estimate = calculateRentEstimate(userInput, regionData);
   
-  console.log(`📊 [Estimate] ${regionData.area}, ${regionData.province}: $${estimate.avgRent} ($${estimate.minRent}-$${estimate.maxRent})`);
+  console.log(`📊 [Ontario Estimate] ${regionData.area}: $${estimate.avgRent} ($${estimate.minRent}-$${estimate.maxRent})`);
   
   return {
     avgRent: estimate.avgRent,
