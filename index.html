@@ -1165,7 +1165,488 @@
         font-size: 1.8rem;
       }
     }
-  </style>
+  
+  /* ================================
+     WORKFLOW COMPACT STYLES
+     ================================ */
+  .workflow-compact {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 1.5rem;
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+  }
+
+  .workflow-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .column-toggle {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, #f0f4f8, #e0e7ff);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--primary);
+    transition: all 0.3s ease;
+  }
+
+  .column-toggle:hover {
+    background: linear-gradient(135deg, #e0e7ff, #d0d9ff);
+    border-color: var(--accent);
+  }
+
+  .toggle-icon {
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+  }
+
+  .column-toggle.active .toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  .column-content {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    border-radius: 15px;
+    border: 1px solid var(--border);
+  }
+
+  .column-content h4 {
+    color: var(--primary);
+    margin: 0 0 1rem 0;
+    font-size: 1.05rem;
+    line-height: 1.4;
+  }
+
+  .column-content .highlight {
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+  }
+
+  .landlord-column .highlight {
+    background: linear-gradient(135deg, #3b82f6, #0ea5e9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .tenant-column .highlight {
+    background: linear-gradient(135deg, #10b981, #059669);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .quick-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .quick-benefits li {
+    font-size: 0.85rem;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .quick-benefits i {
+    color: #10b981;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .landlord-column .quick-benefits i {
+    color: #3b82f6;
+  }
+
+  .workflow-steps-column {
+    position: relative;
+  }
+
+  .carousel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0 1rem 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 1rem;
+  }
+
+  .carousel-header h4 {
+    margin: 0;
+    color: var(--primary);
+    font-size: 1.1rem;
+  }
+
+  .step-counter {
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .workflow-desktop {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.8rem;
+    padding: 1rem 0;
+  }
+
+  .workflow-mini-card {
+    background: linear-gradient(135deg, #f0f4f8, #e0e7ff);
+    padding: 1rem 0.8rem;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .workflow-mini-card:hover {
+    background: linear-gradient(135deg, #e0e7ff, #d0d9ff);
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+  }
+
+  .mini-icon {
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 0.9rem;
+    margin: 0 auto 0.5rem;
+  }
+
+  .workflow-mini-card p {
+    font-size: 0.8rem;
+    color: var(--text-dark);
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .workflow-mobile {
+    display: none;
+  }
+
+  .carousel-container {
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+
+  .carousel-track {
+    display: flex;
+    transition: transform 0.4s ease;
+  }
+
+  .carousel-slide {
+    min-width: 100%;
+    padding: 0 0.5rem;
+  }
+
+  .carousel-card {
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    border: 2px solid var(--border);
+    border-radius: 15px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+  }
+
+  .carousel-number {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1.3rem;
+    margin: 0 auto 1rem;
+  }
+
+  .carousel-card h5 {
+    color: var(--primary);
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+  }
+
+  .carousel-card p {
+    color: var(--text-light);
+    font-size: 0.85rem;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .carousel-controls {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+
+  .carousel-btn {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+  }
+
+  .carousel-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+
+  .carousel-dots {
+    display: flex;
+    gap: 0.4rem;
+    justify-content: center;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    background: var(--border);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .dot.active {
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    width: 24px;
+    border-radius: 4px;
+  }
+
+  .workflow-badge-compact {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 15px;
+    padding: 1.2rem 1rem;
+    text-align: center;
+    margin-top: 1rem;
+  }
+
+  .badge-mini-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin: 0 auto 0.8rem;
+  }
+
+  .workflow-badge-compact h5 {
+    color: var(--primary);
+    margin: 0 0 0.3rem 0;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .workflow-badge-compact p {
+    color: var(--text-light);
+    margin: 0.2rem 0;
+    font-size: 0.85rem;
+  }
+
+  .workflow-benefits-mini {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  .benefit-mini {
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    padding: 1rem;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.7rem;
+    transition: all 0.3s ease;
+  }
+
+  .benefit-mini:hover {
+    background: linear-gradient(135deg, #e0e7ff, #d0d9ff);
+    border-color: var(--accent);
+    transform: translateY(-3px);
+  }
+
+  .benefit-mini i {
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .benefit-mini span {
+    font-size: 0.85rem;
+    color: var(--text-dark);
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .workflow-compact {
+      grid-template-columns: 1fr;
+      padding: 1.5rem;
+      gap: 1rem;
+    }
+
+    .workflow-desktop {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .column-content {
+      display: none;
+    }
+
+    .column-content.active {
+      display: block;
+    }
+
+    .column-toggle {
+      display: flex;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .workflow-compact {
+      grid-template-columns: 1fr;
+      padding: 1rem;
+      gap: 0.8rem;
+      border-radius: 15px;
+    }
+
+    .column-toggle {
+      display: flex;
+    }
+
+    .column-content {
+      display: none;
+      padding: 1rem;
+    }
+
+    .column-content.active {
+      display: block;
+    }
+
+    .workflow-desktop {
+      display: none;
+    }
+
+    .workflow-mobile {
+      display: block;
+    }
+
+    .carousel-controls {
+      display: flex;
+    }
+
+    .carousel-btn {
+      width: 36px;
+      height: 36px;
+      font-size: 0.9rem;
+    }
+
+    .carousel-header {
+      padding: 0 0 0.8rem 0;
+      margin-bottom: 0.8rem;
+    }
+
+    .carousel-header h4 {
+      font-size: 1rem;
+    }
+
+    .workflow-benefits-mini {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.8rem;
+      margin-top: 1.5rem;
+    }
+
+    .benefit-mini {
+      padding: 0.8rem 0.6rem;
+      border-radius: 10px;
+    }
+
+    .benefit-mini i {
+      font-size: 1.2rem;
+    }
+
+    .benefit-mini span {
+      font-size: 0.75rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .workflow-compact {
+      padding: 0.8rem;
+    }
+
+    .carousel-controls {
+      gap: 1rem;
+    }
+
+    .carousel-btn {
+      width: 32px;
+      height: 32px;
+      font-size: 0.8rem;
+    }
+
+    .workflow-benefits-mini {
+      grid-template-columns: 1fr;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+    }
+
+    .section-subtitle {
+      font-size: 0.95rem;
+    }
+  }
+</style>
 </head>
 <body>
 <!-- ============================================
@@ -1285,84 +1766,234 @@
 <!-- ============================================
      WORKFLOW SECTION
      ============================================ -->
+<!-- COMPACT WORKFLOW SECTION -->
 <section class="section" id="workflow">
   <div class="section-header">
     <div class="section-label">Our Process</div>
-    <h2 class="section-title">12-Step Workflow</h2>
-    <p class="section-subtitle">From initial assessment to happy tenants</p>
+    <h2 class="section-title">End-to-End Property Management</h2>
+    <p class="section-subtitle">Better Tenants. Stronger Properties. Happier Owners.</p>
   </div>
-  <div class="workflow-3d">
-    <div class="workflow-card">
-      <div class="workflow-number">1</div>
-      <div class="workflow-icon"><i class="fas fa-clipboard-list"></i></div>
-      <h3>Property Assessment</h3>
-      <p>We conduct a comprehensive evaluation of your property to determine its market value and rental potential.</p>
+
+  <!-- Workflow Visualization -->
+  <div class="workflow-compact">
+    
+    <!-- Left Column: Landlord Benefits -->
+    <div class="workflow-column landlord-column">
+      <button class="column-toggle" onclick="toggleColumn('landlord')">
+        <i class="fas fa-user-tie"></i>
+        <span class="toggle-label">For Landlords</span>
+        <i class="fas fa-chevron-down toggle-icon"></i>
+      </button>
+      <div class="column-content landlord-content" id="landlord-content">
+        <h4>We Solve Challenges for <span class="highlight">Landlords</span></h4>
+        <ul class="quick-benefits">
+          <li><i class="fas fa-check"></i> Reduce vacancies</li>
+          <li><i class="fas fa-check"></i> Save time & stress</li>
+          <li><i class="fas fa-check"></i> Protect investment</li>
+          <li><i class="fas fa-check"></i> Quality tenants</li>
+          <li><i class="fas fa-check"></i> Consistent comm</li>
+          <li><i class="fas fa-check"></i> Maximize ROI</li>
+        </ul>
+      </div>
     </div>
-    <div class="workflow-card">
-      <div class="workflow-number">2</div>
-      <div class="workflow-icon"><i class="fas fa-broom"></i></div>
-      <h3>Staging & Cleaning</h3>
-      <p>Professional staging and cleaning to make your property attractive and ready for potential tenants.</p>
+
+    <!-- Center: Workflow Steps -->
+    <div class="workflow-column workflow-steps-column">
+      <div class="carousel-header">
+        <h4>10-Step Workflow</h4>
+        <span class="step-counter"><span id="current-step">1</span>/10</span>
+      </div>
+
+      <!-- Desktop Grid -->
+      <div class="workflow-desktop">
+        <div class="workflow-mini-card">
+          <div class="mini-icon">1</div>
+          <p><strong>Property Assessment</strong></p>
+        </div>
+        <div class="workflow-mini-card">
+          <div class="mini-icon">2</div>
+          <p><strong>Staging & Cleaning</strong></p>
+        </div>
+        <div class="workflow-mini-card">
+          <div class="mini-icon">3</div>
+          <p><strong>Lead Generation</strong></p>
+        </div>
+        <div class="workflow-mini-card">
+          <div class="mini-icon">4</div>
+          <p><strong>Data Gathering</strong></p>
+        </div>
+        <div class="workflow-mini-card">
+          <div class="mini-icon">5</div>
+          <p><strong>Move-In</strong></p>
+        </div>
+        <div class="workflow-mini-card">
+          <div class="mini-icon">6</div>
+          <p><strong>Onboarding</strong></p>
+        </div>
+        <div class="workflow-mini-card">
+          <div class="mini-icon">7</div>
+          <p><strong>Property Mgmt</strong></p>
+        </div>
+        <div class="workflow-mini-card">
+          <div class="mini-icon">8</div>
+          <p><strong>Service Calls</strong></p>
+        </div>
+        <div class="workflow-mini-card">
+          <div class="mini-icon">9</div>
+          <p><strong>Monthly Report</strong></p>
+        </div>
+        <div class="workflow-mini-card">
+          <div class="mini-icon">10</div>
+          <p><strong>Inspections</strong></p>
+        </div>
+      </div>
+
+      <!-- Mobile Carousel -->
+      <div class="workflow-mobile">
+        <div class="carousel-container">
+          <div class="carousel-track" id="carousel">
+            <div class="carousel-slide">
+              <div class="carousel-card">
+                <div class="carousel-number">1</div>
+                <h5>Property Assessment</h5>
+                <p>Evaluate property condition and market value</p>
+              </div>
+            </div>
+            <div class="carousel-slide">
+              <div class="carousel-card">
+                <div class="carousel-number">2</div>
+                <h5>Staging & Cleaning</h5>
+                <p>Prepare and inspect for rent-ready condition</p>
+              </div>
+            </div>
+            <div class="carousel-slide">
+              <div class="carousel-card">
+                <div class="carousel-number">3</div>
+                <h5>Lead Generation</h5>
+                <p>Market property across top channels</p>
+              </div>
+            </div>
+            <div class="carousel-slide">
+              <div class="carousel-card">
+                <div class="carousel-number">4</div>
+                <h5>Data Gathering</h5>
+                <p>Screen applicants and verify information</p>
+              </div>
+            </div>
+            <div class="carousel-slide">
+              <div class="carousel-card">
+                <div class="carousel-number">5</div>
+                <h5>Successful Move-In</h5>
+                <p>Coordinate smooth move-in process</p>
+              </div>
+            </div>
+            <div class="carousel-slide">
+              <div class="carousel-card">
+                <div class="carousel-number">6</div>
+                <h5>Onboarding</h5>
+                <p>Tenant orientation with expectations</p>
+              </div>
+            </div>
+            <div class="carousel-slide">
+              <div class="carousel-card">
+                <div class="carousel-number">7</div>
+                <h5>Property Management</h5>
+                <p>Handle day-to-day management</p>
+              </div>
+            </div>
+            <div class="carousel-slide">
+              <div class="carousel-card">
+                <div class="carousel-number">8</div>
+                <h5>Service Calls</h5>
+                <p>Quick response to maintenance requests</p>
+              </div>
+            </div>
+            <div class="carousel-slide">
+              <div class="carousel-card">
+                <div class="carousel-number">9</div>
+                <h5>Monthly Reporting</h5>
+                <p>Detailed financial and performance reports</p>
+              </div>
+            </div>
+            <div class="carousel-slide">
+              <div class="carousel-card">
+                <div class="carousel-number">10</div>
+                <h5>Inspections</h5>
+                <p>Routine inspections protect property</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="carousel-btn" onclick="carouselPrev()"><i class="fas fa-chevron-left"></i></button>
+          <div class="carousel-dots" id="dots">
+            <span class="dot active" onclick="goToSlide(0)"></span>
+            <span class="dot" onclick="goToSlide(1)"></span>
+            <span class="dot" onclick="goToSlide(2)"></span>
+            <span class="dot" onclick="goToSlide(3)"></span>
+            <span class="dot" onclick="goToSlide(4)"></span>
+            <span class="dot" onclick="goToSlide(5)"></span>
+            <span class="dot" onclick="goToSlide(6)"></span>
+            <span class="dot" onclick="goToSlide(7)"></span>
+            <span class="dot" onclick="goToSlide(8)"></span>
+            <span class="dot" onclick="goToSlide(9)"></span>
+          </div>
+          <button class="carousel-btn" onclick="carouselNext()"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+
+      <!-- Badge -->
+      <div class="workflow-badge-compact">
+        <div class="badge-mini-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <h5>We protect your property.</h5>
+        <p>We care for your tenants.</p>
+      </div>
     </div>
-    <div class="workflow-card">
-      <div class="workflow-number">3</div>
-      <div class="workflow-icon"><i class="fas fa-chart-line"></i></div>
-      <h3>Lead Generation</h3>
-      <p>Strategic marketing across multiple channels to attract qualified potential tenants and customers.</p>
+
+    <!-- Right Column: Tenant Benefits -->
+    <div class="workflow-column tenant-column">
+      <button class="column-toggle" onclick="toggleColumn('tenant')">
+        <i class="fas fa-users"></i>
+        <span class="toggle-label">For Tenants</span>
+        <i class="fas fa-chevron-down toggle-icon"></i>
+      </button>
+      <div class="column-content tenant-content" id="tenant-content">
+        <h4>We Solve Challenges for <span class="highlight">Tenants</span></h4>
+        <ul class="quick-benefits">
+          <li><i class="fas fa-check"></i> Easy process</li>
+          <li><i class="fas fa-check"></i> Well-maintained homes</li>
+          <li><i class="fas fa-check"></i> Fast resolution</li>
+          <li><i class="fas fa-check"></i> Clear communication</li>
+          <li><i class="fas fa-check"></i> Responsive support</li>
+          <li><i class="fas fa-check"></i> Better living</li>
+        </ul>
+      </div>
     </div>
-    <div class="workflow-card">
-      <div class="workflow-number">4</div>
-      <div class="workflow-icon"><i class="fas fa-database"></i></div>
-      <h3>Data Gathering</h3>
-      <p>Thorough background checks and financial verification of interested tenants and clients.</p>
+  </div>
+
+  <!-- Bottom Benefits -->
+  <div class="workflow-benefits-mini">
+    <div class="benefit-mini">
+      <i class="fas fa-chart-line"></i>
+      <span><strong>Maximize ROI</strong></span>
     </div>
-    <div class="workflow-card">
-      <div class="workflow-number">5</div>
-      <div class="workflow-icon"><i class="fas fa-truck-moving"></i></div>
-      <h3>Successful Move-In</h3>
-      <p>Coordinated and smooth move-in process with all necessary documentation and key handover.</p>
+    <div class="benefit-mini">
+      <i class="fas fa-clock"></i>
+      <span><strong>Save Time</strong></span>
     </div>
-    <div class="workflow-card">
-      <div class="workflow-number">6</div>
-      <div class="workflow-icon"><i class="fas fa-user-check"></i></div>
-      <h3>Onboarding</h3>
-      <p>Complete tenant orientation covering property rules, emergency procedures, and system access.</p>
+    <div class="benefit-mini">
+      <i class="fas fa-dollar-sign"></i>
+      <span><strong>Reduce Costs</strong></span>
     </div>
-    <div class="workflow-card">
-      <div class="workflow-number">7</div>
-      <div class="workflow-icon"><i class="fas fa-building"></i></div>
-      <h3>Property Management</h3>
-      <p>Ongoing management of property maintenance, inspections, and compliance with all regulations.</p>
+    <div class="benefit-mini">
+      <i class="fas fa-smile"></i>
+      <span><strong>Happy Tenants</strong></span>
     </div>
-    <div class="workflow-card">
-      <div class="workflow-number">8</div>
-      <div class="workflow-icon"><i class="fas fa-phone-alt"></i></div>
-      <h3>Service Calls</h3>
-      <p>24/7 responsive support for maintenance emergencies and tenant inquiries with rapid response.</p>
-    </div>
-    <div class="workflow-card">
-      <div class="workflow-number">9</div>
-      <div class="workflow-icon"><i class="fas fa-chart-pie"></i></div>
-      <h3>Monthly Reporting</h3>
-      <p>Detailed financial reports and performance analytics delivered every month for transparency.</p>
-    </div>
-    <div class="workflow-card">
-      <div class="workflow-number">10</div>
-      <div class="workflow-icon"><i class="fas fa-search"></i></div>
-      <h3>Repeated Inspections</h3>
-      <p>Regular property inspections to maintain standards and ensure tenant compliance and property condition.</p>
-    </div>
-    <div class="workflow-card">
-      <div class="workflow-number">11</div>
-      <div class="workflow-icon"><i class="fas fa-smile"></i></div>
-      <h3>Happy Tenants</h3>
-      <p>Maintain excellent tenant relationships through responsive communication and problem resolution.</p>
-    </div>
-    <div class="workflow-card">
-      <div class="workflow-number">12</div>
-      <div class="workflow-icon"><i class="fas fa-home"></i></div>
-      <h3>Stronger Properties</h3>
-      <p>Continuously improve property value through strategic investments and market-responsive updates.</p>
+    <div class="benefit-mini">
+      <i class="fas fa-home"></i>
+      <span><strong>Stronger Properties</strong></span>
     </div>
   </div>
 </section>
@@ -1899,45 +2530,59 @@
   // ============================================
   // EXCEL DOWNLOAD
   // ============================================
-  window.downloadExcel = function () {
-    if (!currentEstimateData.avgRent) return showToast('Please calculate an estimate first', 'error');
+  window.downloadExcel = async function () {
+  if (!currentEstimateData.avgRent) {
+    showToast('Please calculate an estimate first', 'error');
+    return;
+  }
 
-    const wb = XLSX.utils.book_new();
-    const sheet = XLSX.utils.aoa_to_sheet([
-      ['LEASE NEXUS PROPERTY VALUATION REPORT', ''],
-      ['', ''],
-      ['CLIENT INFORMATION', ''],
-      ['Name', currentEstimateData.name || 'N/A'],
-      ['Email', currentEstimateData.email || 'N/A'],
-      ['Phone', currentEstimateData.phone || 'N/A'],
-      ['', ''],
-      ['PROPERTY DETAILS', ''],
-      ['Address', currentEstimateData.address || 'N/A'],
-      ['Postal Code', currentEstimateData.postal || 'N/A'],
-      ['Property Type', currentEstimateData.propertyType || 'N/A'],
-      ['Bedrooms', currentEstimateData.beds || 'N/A'],
-      ['Bathrooms', currentEstimateData.baths || 'N/A'],
-      ['Square Footage', currentEstimateData.sqft || 'N/A'],
-      ['Parking Spaces', currentEstimateData.parking || 'N/A'],
-      ['', ''],
-      ['MARKET ANALYSIS', ''],
-      ['Market Area', currentEstimateData.market || 'N/A'],
-      ['Average Monthly Rent', `$${currentEstimateData.avgRent}`],
-      ['Minimum Estimate', `$${currentEstimateData.minRent}`],
-      ['Maximum Estimate', `$${currentEstimateData.maxRent}`],
-      ['Price Per Sqft', `$${currentEstimateData.ratePerSqft}`],
-      ['', ''],
-      ['NOTES', ''],
-      [currentEstimateData.notes || 'No notes provided'],
-      ['', ''],
-      ['Report Generated', currentEstimateData.date],
-      ['', ''],
-      ['Disclaimer', 'This is an AI-generated estimate. For a professional valuation, please contact our team.']
-    ]);
-    XLSX.utils.book_append_sheet(wb, sheet, 'Valuation Report');
-    XLSX.writeFile(wb, `LeaseNexus_Valuation_${currentEstimateData.name || 'client'}.xlsx`);
-    showToast('Report downloaded successfully!');
-  };
+  try {
+    showToast('Generating professional report...', 'success');
+    
+    const response = await fetch(`${API_BASE}/excel/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: currentEstimateData.name || 'Client',
+        email: currentEstimateData.email || 'info@leasenexus.com',
+        phone: currentEstimateData.phone || '1-800-LEASE-01',
+        address: currentEstimateData.address || 'Not specified',
+        postal: currentEstimateData.postal || 'N/A',
+        propertyType: currentEstimateData.propertyType || 'Apartment',
+        bedrooms: currentEstimateData.beds || '1',
+        bathrooms: currentEstimateData.baths || '1',
+        sqft: currentEstimateData.sqft || 1000,
+        parking: currentEstimateData.parking || '0',
+        avgRent: currentEstimateData.avgRent,
+        minRent: currentEstimateData.minRent,
+        maxRent: currentEstimateData.maxRent,
+        avgPricePerSqft: currentEstimateData.ratePerSqft,
+        marketArea: currentEstimateData.market,
+        province: 'ON',
+        comparableListings: 15
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to generate report');
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `LeaseNexus_Valuation_${(currentEstimateData.name || 'Report').replace(/\s+/g, '_')}_${new Date().getFullYear()}.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+
+    showToast('Report downloaded successfully! Check your downloads folder.', 'success');
+  } catch (err) {
+    console.error('Excel download error:', err);
+    showToast('Error generating report: ' + err.message, 'error');
+  }
+};;
 
   document.getElementById('downloadExcelBtn').addEventListener('click', window.downloadExcel);
 
@@ -1981,6 +2626,62 @@
         document.getElementById('navLinks').style.display = 'none';
       });
     });
+  });
+
+  // ================================
+  // Workflow Carousel Functions
+  // ================================
+  let currentSlide = 0;
+  let slides = document.querySelectorAll('.carousel-slide');
+  let totalSlides = slides.length;
+
+  function goToSlide(n) {
+    currentSlide = n;
+    const track = document.getElementById('carousel');
+    if (track) {
+      track.style.transform = `translateX(-${currentSlide * 100}%)`;
+      
+      const dots = document.querySelectorAll('.dot');
+      dots.forEach(dot => dot.classList.remove('active'));
+      if (dots[currentSlide]) dots[currentSlide].classList.add('active');
+      
+      const stepDisplay = document.getElementById('current-step');
+      if (stepDisplay) stepDisplay.textContent = currentSlide + 1;
+    }
+  }
+
+  function carouselNext() {
+    if (!slides || slides.length === 0) return;
+    currentSlide = (currentSlide + 1) % slides.length;
+    goToSlide(currentSlide);
+  }
+
+  function carouselPrev() {
+    if (!slides || slides.length === 0) return;
+    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    goToSlide(currentSlide);
+  }
+
+  // Column toggle for mobile
+  function toggleColumn(type) {
+    const contentId = type === 'landlord' ? 'landlord-content' : 'tenant-content';
+    const buttonClass = type === 'landlord' ? '.landlord-column .column-toggle' : '.tenant-column .column-toggle';
+    
+    const content = document.getElementById(contentId);
+    const button = document.querySelector(buttonClass);
+    
+    if (content && button) {
+      content.classList.toggle('active');
+      button.classList.toggle('active');
+    }
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (window.innerWidth <= 768) {
+      if (e.key === 'ArrowLeft') carouselPrev();
+      if (e.key === 'ArrowRight') carouselNext();
+    }
   });
 </script>
 </body>

@@ -69,7 +69,7 @@ async function sendAutoReply({ name, email, type, location }) {
       headerText = 'We Received Your Property Inquiry';
       bodyText = `Thank you for submitting your property at <strong>${location}</strong>. Our team will review your details and contact you soon.`;
       subject = 'Property Inquiry Received - Lease Nexus';
-      actionLink = 'https://leasenexus.onrender.com/';
+      actionLink = 'https://osmanians.github.io/leasenexus/index.html#services';
       actionText = 'Check Our Services';
     } else if (type === 'tenant') {
       headerText = 'We Received Your Tenant Application';
