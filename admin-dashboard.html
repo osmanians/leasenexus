@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lease Nexus Admin | Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #0f172a;
+      --secondary: #1e293b;
+      --accent: #3b82f6;
+      --accent-alt: #06b6d4;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --light: #f8fafc;
+      --border: #e2e8f0;
+      --text-dark: #0f172a;
+      --text-light: #64748b;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Segoe UI', Trebuchet MS, sans-serif;
+      background: #f8fafc;
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      background: white;
+      border-bottom: 2px solid var(--border);
+      padding: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .navbar-brand {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .navbar-brand i {
+      color: var(--accent);
+    }
+
+    .navbar-user {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .user-info {
+      text-align: right;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 0.95rem;
+    }
+
+    .user-email {
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    .logout-btn {
+      padding: 0.6rem 1.2rem;
+      background: var(--danger);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .logout-btn:hover {
+      background: #dc2626;
+      transform: translateY(-2px);
+    }
+
+    /* ===== CONTAINER ===== */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    /* ===== HEADER ===== */
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+      color: var(--text-light);
+      font-size: 0.95rem;
+    }
+
+    /* ===== CONTROLS ===== */
+    .controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+    }
+
+    .filter-select {
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      background: white;
+      color: var(--text-dark);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 15px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--light);
+      color: var(--primary);
+      border: 2px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border);
+    }
+
+    /* ===== STATS ===== */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 15px;
+      border: 2px solid var(--border);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    /* ===== TABLE ===== */
+    .table-wrapper {
+      background: white;
+      border-radius: 15px;
+      border: 2px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    thead {
+      background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+      border-bottom: 2px solid var(--border);
+    }
+
+    th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 700;
+      color: var(--primary);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr:hover {
+      background: #f8fafc;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .status-new {
+      background: #dbeafe;
+      color: #0c4a6e;
+    }
+
+    .status-contacted {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-converted {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status-inactive {
+      background: #fee2e2;
+      color: #7f1d1d;
+    }
+
+    .action-cell {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      padding: 0.4rem 0.8rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .action-btn-edit {
+      background: var(--accent);
+      color: white;
+    }
+
+    .action-btn-edit:hover {
+      background: #1e40af;
+    }
+
+    .action-btn-delete {
+      background: var(--danger);
+      color: white;
+    }
+
+    .action-btn-delete:hover {
+      background: #dc2626;
+    }
+
+    /* ===== MODAL ===== */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-light);
+      transition: color 0.3s ease;
+    }
+
+    .modal-close:hover {
+      color: var(--primary);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+      font-size: 0.95rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .modal-footer button {
+      flex: 1;
+    }
+
+    /* ===== LOADING ===== */
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-light);
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border: 3px solid rgba(59, 130, 246, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--accent);
+      animation: spin 0.6s linear infinite;
+      margin-bottom: 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-light);
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .container {
+        padding: 0.75rem;
+      }
+
+      .page-title {
+        font-size: 1.5rem;
+      }
+
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-box {
+        min-width: auto;
+      }
+
+      .action-buttons {
+        width: 100%;
+      }
+
+      .action-buttons button {
+        flex: 1;
+        justify-content: center;
+      }
+
+      .stats {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 0.75rem;
+      }
+
+      .stat-card {
+        padding: 1rem;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
+      }
+
+      .stat-label {
+        font-size: 0.75rem;
+      }
+
+      table {
+        font-size: 0.8rem;
+      }
+
+      th, td {
+        padding: 0.75rem 0.5rem;
+      }
+
+      .action-cell {
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .action-btn {
+        width: 100%;
+        text-align: center;
+        padding: 0.5rem;
+      }
+
+      .navbar-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .navbar-user {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .user-info {
+        text-align: left;
+      }
+
+      .logout-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+      }
+
+      .modal-content {
+        padding: 1.5rem;
+      }
+
+      .modal-footer {
+        flex-direction: column;
+      }
+
+      .modal-footer button {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        font-size: 14px;
+      }
+
+      .container {
+        padding: 0.5rem;
+      }
+
+      .page-title {
+        font-size: 1.3rem;
+      }
+
+      .navbar {
+        padding: 0.75rem;
+      }
+
+      .navbar-brand {
+        font-size: 1.1rem;
+      }
+
+      .btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+      }
+
+      .stat-card {
+        padding: 0.875rem;
+      }
+
+      .stat-value {
+        font-size: 1.3rem;
+      }
+
+      th, td {
+        padding: 0.6rem 0.4rem;
+      }
+
+      .modal-content {
+        padding: 1rem;
+      }
+
+      .modal-title {
+        font-size: 1.2rem;
+      }
+
+      .form-control {
+        padding: 0.6rem 0.75rem;
+        font-size: 16px; /* Prevents zoom on iOS */
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="index.html" class="navbar-brand">
+        <i class="fas fa-building"></i> LEASE NEXUS
+      </a>
+      <div class="navbar-user">
+        <div class="user-info">
+          <div class="user-name" id="userName">Admin User</div>
+          <div class="user-email" id="userEmail">admin@leasenexus.com</div>
+        </div>
+        <button class="logout-btn" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-title"><i class="fas fa-chart-bar"></i> Dashboard</div>
+      <div class="page-subtitle">Manage all leads and inquiries</div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats" id="stats">
+      <div class="stat-card">
+        <div class="stat-value" id="totalLeads">0</div>
+        <div class="stat-label">Total Leads</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="newLeads">0</div>
+        <div class="stat-label">New</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="contactedLeads">0</div>
+        <div class="stat-label">Contacted</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="convertedLeads">0</div>
+        <div class="stat-label">Converted</div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input 
+          type="text" 
+          id="searchInput" 
+          placeholder="Search by name, email, or phone..." 
+          onkeyup="filterTable()"
+        >
+      </div>
+      <select class="filter-select" id="statusFilter" onchange="filterTable()">
+        <option value="">All Status</option>
+        <option value="new">New</option>
+        <option value="contacted">Contacted</option>
+        <option value="converted">Converted</option>
+        <option value="inactive">Inactive</option>
+      </select>
+      <div class="action-buttons">
+        <button class="btn btn-primary" onclick="exportToExcel()">
+          <i class="fas fa-download"></i> Export Excel
+        </button>
+        <button class="btn btn-secondary" onclick="refreshData()">
+          <i class="fas fa-sync"></i> Refresh
+        </button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrapper">
+      <div id="loadingContainer" class="loading">
+        <div class="spinner"></div>
+        <p>Loading leads...</p>
+      </div>
+      <div id="tableContainer" style="display: none;">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="leadsTableBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div id="emptyContainer" style="display: none;">
+        <div class="empty-state">
+          <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+          <p>No leads found</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="modal" id="editModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Edit Lead Status</div>
+        <button class="modal-close" onclick="closeModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Name</div>
+        <div style="padding: 0.75rem; background: #f8fafc; border-radius: 8px;" id="modalName"></div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Email</div>
+        <div style="padding: 0.75rem; background: #f8fafc; border-radius: 8px;" id="modalEmail"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="statusSelect">Status</label>
+        <select id="statusSelect" class="form-control">
+          <option value="new">New</option>
+          <option value="contacted">Contacted</option>
+          <option value="converted">Converted</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="notesField">Notes</label>
+        <textarea 
+          id="notesField" 
+          class="form-control" 
+          rows="3" 
+          placeholder="Add any notes about this lead..."
+        ></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveStatus()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://leasenexus.onrender.com/api';
+    // For local testing: const API_BASE = 'http://localhost:5000/api';
+
+    let allLeads = [];
+    let currentEditingLeadId = null;
+
+    // Check authentication
+    window.addEventListener('load', () => {
+      const token = localStorage.getItem('adminToken');
+      const user = localStorage.getItem('adminUser');
+
+      if (!token || !user) {
+        window.location.href = 'admin-login.html';
+        return;
+      }
+
+      try {
+        const userData = JSON.parse(user);
+        document.getElementById('userName').textContent = userData.name || 'Admin User';
+        document.getElementById('userEmail').textContent = userData.email || 'admin@leasenexus.com';
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+      }
+
+      loadLeads();
+    });
+
+    async function loadLeads() {
+      try {
+        const token = localStorage.getItem('adminToken');
+        const response = await fetch(`${API_BASE}/admin/leads`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.status === 401) {
+          // Token expired
+          localStorage.removeItem('adminToken');
+          localStorage.removeItem('adminUser');
+          window.location.href = 'admin-login.html';
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error('Failed to load leads');
+        }
+
+        const data = await response.json();
+        allLeads = data.leads || [];
+        
+        document.getElementById('loadingContainer').style.display = 'none';
+        
+        if (allLeads.length === 0) {
+          document.getElementById('emptyContainer').style.display = 'block';
+        } else {
+          document.getElementById('tableContainer').style.display = 'block';
+          displayLeads(allLeads);
+          updateStats();
+        }
+      } catch (err) {
+        console.error('Error loading leads:', err);
+        document.getElementById('loadingContainer').innerHTML = `
+          <div class="empty-state">
+            <p style="color: var(--danger);">Error loading leads. Please refresh the page.</p>
+          </div>
+        `;
+      }
+    }
+
+    function displayLeads(leads) {
+      const tbody = document.getElementById('leadsTableBody');
+      tbody.innerHTML = '';
+
+      leads.forEach(lead => {
+        const row = document.createElement('tr');
+        const createdDate = new Date(lead.created_at).toLocaleDateString();
+        
+        row.innerHTML = `
+          <td><strong>${lead.first_name || ''} ${lead.last_name || ''}</strong></td>
+          <td>${lead.email || 'N/A'}</td>
+          <td>${lead.phone || 'N/A'}</td>
+          <td>${lead.type === 'landlord' ? 'Landlord' : 'Tenant'}</td>
+          <td><span class="status-badge status-${lead.status || 'new'}">${(lead.status || 'new').charAt(0).toUpperCase() + (lead.status || 'new').slice(1)}</span></td>
+          <td>${createdDate}</td>
+          <td class="action-cell">
+            <button class="action-btn action-btn-edit" onclick="editLead(${lead.id}, '${lead.first_name}', '${lead.email}')">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function updateStats() {
+      const stats = {
+        total: allLeads.length,
+        new: allLeads.filter(l => (l.status || 'new') === 'new').length,
+        contacted: allLeads.filter(l => l.status === 'contacted').length,
+        converted: allLeads.filter(l => l.status === 'converted').length
+      };
+
+      document.getElementById('totalLeads').textContent = stats.total;
+      document.getElementById('newLeads').textContent = stats.new;
+      document.getElementById('contactedLeads').textContent = stats.contacted;
+      document.getElementById('convertedLeads').textContent = stats.converted;
+    }
+
+    function filterTable() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const statusFilter = document.getElementById('statusFilter').value;
+
+      let filtered = allLeads.filter(lead => {
+        const name = `${lead.first_name || ''} ${lead.last_name || ''}`.toLowerCase();
+        const email = (lead.email || '').toLowerCase();
+        const phone = (lead.phone || '').toLowerCase();
+        
+        const matchesSearch = name.includes(searchTerm) || email.includes(searchTerm) || phone.includes(searchTerm);
+        const matchesStatus = !statusFilter || (lead.status || 'new') === statusFilter;
+
+        return matchesSearch && matchesStatus;
+      });
+
+      displayLeads(filtered);
+    }
+
+    function editLead(id, name, email) {
+      currentEditingLeadId = id;
+      const lead = allLeads.find(l => l.id === id);
+      
+      document.getElementById('modalName').textContent = name;
+      document.getElementById('modalEmail').textContent = email;
+      document.getElementById('statusSelect').value = lead.status || 'new';
+      document.getElementById('notesField').value = lead.notes || '';
+      
+      document.getElementById('editModal').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('editModal').classList.remove('show');
+    }
+
+    async function saveStatus() {
+      if (!currentEditingLeadId) return;
+
+      try {
+        const token = localStorage.getItem('adminToken');
+        const status = document.getElementById('statusSelect').value;
+        const notes = document.getElementById('notesField').value;
+
+        const response = await fetch(`${API_BASE}/admin/leads/${currentEditingLeadId}/status`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ status, notes })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update status');
+        }
+
+        closeModal();
+        await loadLeads();
+        showNotification('Lead updated successfully!', 'success');
+      } catch (err) {
+        console.error('Error updating lead:', err);
+        showNotification('Error updating lead', 'error');
+      }
+    }
+
+    async function exportToExcel() {
+      try {
+        const token = localStorage.getItem('adminToken');
+        const response = await fetch(`${API_BASE}/admin/export`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Export failed');
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `LeaseNexus_Leads_${new Date().toISOString().split('T')[0]}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        showNotification('Excel file downloaded successfully!', 'success');
+      } catch (err) {
+        console.error('Export error:', err);
+        showNotification('Error exporting data', 'error');
+      }
+    }
+
+    function refreshData() {
+      document.getElementById('loadingContainer').style.display = 'block';
+      document.getElementById('tableContainer').style.display = 'none';
+      loadLeads();
+    }
+
+    function logout() {
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('adminUser');
+      window.location.href = 'admin-login.html';
+    }
+
+    function showNotification(message, type) {
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        background: ${type === 'success' ? 'var(--success)' : 'var(--danger)'};
+        color: white;
+        border-radius: 10px;
+        font-weight: 600;
+        z-index: 2000;
+        animation: slideIn 0.3s ease;
+      `;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

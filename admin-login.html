@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lease Nexus Admin | Login</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #0f172a;
+      --secondary: #1e293b;
+      --accent: #3b82f6;
+      --accent-alt: #06b6d4;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --light: #f8fafc;
+      --border: #e2e8f0;
+      --text-dark: #0f172a;
+      --text-light: #64748b;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Segoe UI', Trebuchet MS, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      line-height: 1.6;
+    }
+
+    .login-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      max-width: 450px;
+      width: 100%;
+      animation: slideUp 0.5s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .login-header {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      color: white;
+    }
+
+    .logo {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 800;
+    }
+
+    .logo i {
+      margin-right: 0.5rem;
+      color: var(--accent);
+    }
+
+    .login-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+
+    .login-subtitle {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .login-body {
+      padding: 2rem 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-dark);
+      font-size: 0.95rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-light);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--accent);
+    }
+
+    .checkbox-group label {
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      margin: 0;
+    }
+
+    .forgot-password {
+      text-decoration: none;
+      color: var(--accent);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .forgot-password:hover {
+      color: var(--accent-alt);
+    }
+
+    .login-button {
+      width: 100%;
+      padding: 0.875rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 1rem;
+    }
+
+    .login-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+    }
+
+    .login-button:active {
+      transform: translateY(0);
+    }
+
+    .login-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .error-message {
+      background: #fee2e2;
+      color: #dc2626;
+      padding: 0.875rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+      display: none;
+      border-left: 4px solid #dc2626;
+      font-size: 0.95rem;
+    }
+
+    .error-message.show {
+      display: block;
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    .success-message {
+      background: #d1fae5;
+      color: #065f46;
+      padding: 0.875rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+      display: none;
+      border-left: 4px solid #059669;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(59, 130, 246, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--accent);
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .login-footer {
+      padding: 1rem 1.5rem;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 0.9rem;
+      color: var(--text-light);
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      background: white;
+      border: 2px solid var(--border);
+      color: var(--accent);
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-align: center;
+      width: 100%;
+    }
+
+    .back-link:hover {
+      border-color: var(--accent);
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    .demo-notice {
+      background: #fef3c7;
+      border: 2px solid #fbbf24;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+      font-size: 0.85rem;
+      color: #92400e;
+    }
+
+    .demo-notice strong {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .login-container {
+        border-radius: 15px;
+      }
+
+      .login-header {
+        padding: 1.5rem 1rem;
+      }
+
+      .logo {
+        font-size: 2rem;
+      }
+
+      .login-title {
+        font-size: 1.4rem;
+      }
+
+      .login-subtitle {
+        font-size: 0.8rem;
+      }
+
+      .login-body {
+        padding: 1.5rem 1rem;
+      }
+
+      .form-label {
+        font-size: 0.9rem;
+      }
+
+      .form-input {
+        padding: 0.65rem 0.875rem;
+        font-size: 16px; /* Prevents zoom on iOS */
+      }
+
+      .form-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+
+      .forgot-password {
+        width: 100%;
+        text-align: right;
+      }
+
+      .login-button {
+        padding: 0.8rem;
+        font-size: 0.95rem;
+      }
+
+      body {
+        padding: 0.5rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .login-container {
+        max-width: 100%;
+      }
+
+      .login-body {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <div class="logo">
+        <i class="fas fa-lock"></i> LEASE NEXUS
+      </div>
+      <div class="login-title">Admin Panel</div>
+      <div class="login-subtitle">Property Management System</div>
+    </div>
+
+    <div class="login-body">
+      <div class="demo-notice">
+        <strong>Demo Credentials:</strong>
+        Email: admin@leasenexus.com<br>
+        Password: admin123
+      </div>
+
+      <div class="error-message" id="errorMessage"></div>
+      <div class="success-message" id="successMessage"></div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <input 
+            type="email" 
+            id="email" 
+            class="form-input" 
+            placeholder="admin@example.com" 
+            required
+            autocomplete="email"
+          >
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            class="form-input" 
+            placeholder="••••••••" 
+            required
+            autocomplete="current-password"
+          >
+        </div>
+
+        <div class="form-row">
+          <div class="checkbox-group">
+            <input type="checkbox" id="rememberMe">
+            <label for="rememberMe">Remember me</label>
+          </div>
+          <a href="#" class="forgot-password">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="login-button" id="submitBtn">
+          <span id="buttonText">Sign In</span>
+          <span id="loadingSpinner" style="display: none;">
+            <span class="spinner"></span>
+          </span>
+        </button>
+
+        <div class="loading" id="loading">
+          <span class="spinner"></span>
+          <p style="margin-top: 0.5rem; color: var(--text-light);">Authenticating...</p>
+        </div>
+      </form>
+
+      <a href="index.html" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Website
+      </a>
+    </div>
+
+    <div class="login-footer">
+      For support, contact: support@leasenexus.com
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://leasenexus.onrender.com/api';
+    // For local testing, uncomment:
+    // const API_BASE = 'http://localhost:5000/api';
+
+    const loginForm = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const rememberMe = document.getElementById('rememberMe');
+    const submitBtn = document.getElementById('submitBtn');
+    const buttonText = document.getElementById('buttonText');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+
+    // Restore email if "Remember me" was checked
+    window.addEventListener('load', () => {
+      const savedEmail = localStorage.getItem('adminEmail');
+      if (savedEmail) {
+        emailInput.value = savedEmail;
+        rememberMe.checked = true;
+      }
+    });
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await handleLogin();
+    });
+
+    async function handleLogin() {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      // Validation
+      if (!email || !password) {
+        showError('Please fill in all fields');
+        return;
+      }
+
+      if (!email.includes('@')) {
+        showError('Please enter a valid email address');
+        return;
+      }
+
+      // Show loading state
+      submitBtn.disabled = true;
+      buttonText.style.display = 'none';
+      loadingSpinner.style.display = 'inline-block';
+      clearMessages();
+
+      try {
+        const response = await fetch(`${API_BASE}/admin/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Login failed');
+        }
+
+        // Save token
+        localStorage.setItem('adminToken', data.token);
+        localStorage.setItem('adminUser', JSON.stringify(data.user));
+
+        // Save email if "Remember me" is checked
+        if (rememberMe.checked) {
+          localStorage.setItem('adminEmail', email);
+        } else {
+          localStorage.removeItem('adminEmail');
+        }
+
+        showSuccess('Login successful! Redirecting...');
+        
+        setTimeout(() => {
+          window.location.href = 'admin-dashboard.html';
+        }, 1500);
+
+      } catch (err) {
+        showError(err.message || 'Login failed. Please try again.');
+        console.error('Login error:', err);
+      } finally {
+        submitBtn.disabled = false;
+        buttonText.style.display = 'inline';
+        loadingSpinner.style.display = 'none';
+      }
+    }
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.classList.add('show');
+      errorMessage.style.display = 'block';
+    }
+
+    function showSuccess(message) {
+      successMessage.textContent = message;
+      successMessage.classList.add('show');
+      successMessage.style.display = 'block';
+    }
+
+    function clearMessages() {
+      errorMessage.classList.remove('show');
+      successMessage.classList.remove('show');
+      errorMessage.style.display = 'none';
+      successMessage.style.display = 'none';
+    }
+  </script>
+</body>
+</html>
