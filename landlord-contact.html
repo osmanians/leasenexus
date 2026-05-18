@@ -3,158 +3,613 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lease Nexus | Property Management Inquiry</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <title>Lease Nexus | Landlord Inquiry</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #0f172a;
+      --secondary: #1e293b;
+      --accent: #3b82f6;
+      --accent-alt: #06b6d4;
+      --success: #10b981;
+      --danger: #ef4444;
+      --light: #f8fafc;
+      --border: #e2e8f0;
+      --text-dark: #0f172a;
+      --text-light: #64748b;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: linear-gradient(135deg, #1a365d, #2c5282);
+      font-family: 'Segoe UI', Trebuchet MS, sans-serif;
+      background: linear-gradient(135deg, #f0f4f8 0%, #e0e7ff 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 2rem;
     }
-    .form-container {
+
+    .container {
+      width: 100%;
+      max-width: 900px;
       background: white;
-      border-radius: 32px;
-      padding: 2rem;
-      max-width: 800px;
-      width: 100%;
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+      border-radius: 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
     }
-    h1 { color: #1a365d; margin-bottom: 0.5rem; }
-    .form-group { margin-bottom: 1rem; }
-    label { font-weight: 600; display: block; margin-bottom: 0.3rem; }
-    input, select { width: 100%; padding: 0.7rem; border: 1px solid #cbd5e1; border-radius: 12px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-    button {
-      background: #1a365d;
+
+    .form-header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #3b82f6 100%);
       color: white;
-      padding: 0.8rem;
-      border: none;
-      border-radius: 40px;
-      font-weight: 600;
-      width: 100%;
-      cursor: pointer;
-      margin-top: 1rem;
+      padding: 3rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
     }
-    .back-link { display: inline-block; margin-top: 1rem; color: #64748b; text-decoration: none; }
+
+    .form-header::before {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: rgba(6, 182, 212, 0.1);
+      border-radius: 50%;
+      top: -100px;
+      right: -100px;
+    }
+
+    .form-header::after {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: rgba(59, 130, 246, 0.1);
+      border-radius: 50%;
+      bottom: -50px;
+      left: -50px;
+    }
+
+    .form-header-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-header-content h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .form-header-content p {
+      font-size: 1.1rem;
+      opacity: 0.95;
+    }
+
+    .form-body {
+      padding: 3rem 2rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+      color: var(--primary);
+      font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 1rem 1.2rem;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 2rem 0 1rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .form-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    button {
+      padding: 1.1rem;
+      border: none;
+      border-radius: 15px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
+      color: white;
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+      grid-column: 1 / -1;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(59, 130, 246, 0.4);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .back-btn {
+      background: var(--light);
+      color: var(--primary);
+      border: 2px solid var(--border);
+      grid-column: 1 / -1;
+    }
+
+    .back-btn:hover {
+      background: var(--border);
+      transform: translateY(-2px);
+    }
+
+    .conditional-field {
+      display: none;
+    }
+
+    .conditional-field.active {
+      display: flex;
+    }
+
+    .success-state {
+      display: none;
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+
+    .success-state.active {
+      display: block;
+    }
+
+    .success-icon {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, var(--success), #059669);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: white;
+      margin: 0 auto 1.5rem;
+    }
+
+    .success-state h2 {
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .success-state p {
+      color: var(--text-light);
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+
+    .success-state button {
+      width: fit-content;
+      margin: 0 auto;
+    }
+
     .toast {
       position: fixed;
       bottom: 2rem;
       right: 2rem;
-      background: #0f172a;
-      color: white;
-      padding: 0.8rem 1.5rem;
-      border-radius: 40px;
+      background: white;
+      padding: 1.2rem 1.8rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
       display: none;
+      align-items: center;
+      gap: 1rem;
+      z-index: 2000;
+      animation: slideIn 0.3s ease;
     }
-    @media (max-width: 640px) { .form-row { grid-template-columns: 1fr; } }
+
+    .toast.active {
+      display: flex;
+    }
+
+    .toast.success {
+      border-left: 5px solid var(--success);
+    }
+
+    .toast.error {
+      border-left: 5px solid var(--danger);
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(100px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 640px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .form-body {
+        padding: 2rem 1.5rem;
+      }
+
+      .form-header-content h1 {
+        font-size: 1.8rem;
+      }
+
+      .form-actions {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
-<div class="form-container">
-  <h1><i class="fas fa-building"></i> Property Management Inquiry</h1>
-  <p>Please fill the details below. Our team will contact you within 24 hours.</p>
-  <form id="landlordForm">
-    <h3>Basic Information</h3>
-    <div class="form-row">
-      <div class="form-group"><label>First Name *</label><input type="text" id="firstName" required></div>
-      <div class="form-group"><label>Last Name *</label><input type="text" id="lastName" required></div>
+  <div class="container">
+    <!-- Form Header -->
+    <div class="form-header">
+      <div class="form-header-content">
+        <h1>
+          <i class="fas fa-building"></i> Landlord Inquiry
+        </h1>
+        <p>Join hundreds of successful landlords managing properties with Lease Nexus</p>
+      </div>
     </div>
-    <div class="form-group"><label>Email Address *</label><input type="email" id="email" required></div>
-    <div class="form-group"><label>Phone *</label><input type="tel" id="phone" required></div>
-    
-    <h3>Property Address</h3>
-    <div class="form-row">
-      <div class="form-group"><label>Unit (optional)</label><input type="text" id="unit"></div>
-      <div class="form-group"><label>Street Number *</label><input type="text" id="streetNo" required></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label>Street Name *</label><input type="text" id="streetName" required></div>
-      <div class="form-group"><label>City *</label><input type="text" id="city" required></div>
-    </div>
-    <div class="form-group"><label>Postal Code *</label><input type="text" id="postalCode" required></div>
-    
-    <h3>Property Specification</h3>
-    <div class="form-group"><label>House Type</label><select id="houseType"><option>Single Family</option><option>Full House</option><option>Basement</option><option>Upper Portion</option><option>Condo</option><option>Apartment</option><option>Townhouse</option></select></div>
-    <div class="form-group"><label>Levels</label><select id="levels"><option>1</option><option>2</option><option>3</option></select></div>
-    <div id="basementGroup" style="display:none;"><div class="form-group"><label>Basement Entrance</label><select id="basementEntrance"><option>Separate</option><option>Combined - No separation</option></select></div></div>
-    <div class="form-group"><label>Bedrooms</label><select id="bedrooms"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7+</option></select></div>
-    <div class="form-group"><label>Bathrooms</label><select id="bathrooms"><option>1</option><option>1.5</option><option>2</option><option>2.5</option><option>3</option><option>3.5</option><option>4</option><option>4.5</option><option>5+</option></select></div>
-    <div class="form-group"><label>Kitchen</label><select id="kitchen"><option>1</option><option>2</option></select></div>
-    <div class="form-group"><label>Garage</label><select id="garage"><option>No Garage</option><option>Single Car Garage</option><option>Double Car Garage</option><option>Street Parking</option><option>Parking Lot</option></select></div>
-    <div class="form-group"><label>Expected Monthly Rent ($)</label><input type="number" step="0.01" id="expectedRent"></div>
-    <div class="form-group"><label>Utilities</label><select id="utilities"><option>Included</option><option>Excluded</option></select></div>
-    
-    <button type="submit"><i class="fas fa-paper-plane"></i> Submit Inquiry</button>
-  </form>
-  <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
-</div>
-<div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg"></span></div>
 
-<script>
-  const API_BASE = 'https://leasenexus.onrender.com/api';
-  function showToast(msg) {
-    const toast = document.getElementById('toast');
-    document.getElementById('toastMsg').innerText = msg;
-    toast.style.display = 'flex';
-    setTimeout(() => toast.style.display = 'none', 3000);
-  }
-  document.getElementById('levels').addEventListener('change', function() {
-    document.getElementById('basementGroup').style.display = (this.value === '2' || this.value === '3') ? 'block' : 'none';
-  });
-  document.getElementById('landlordForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = e.target.querySelector('button');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Submitting...';
-    // concatenate address
-    const unit = document.getElementById('unit').value;
-    const streetNo = document.getElementById('streetNo').value;
-    const streetName = document.getElementById('streetName').value;
-    const city = document.getElementById('city').value;
-    const postal = document.getElementById('postalCode').value;
-    let address = `${streetNo} ${streetName}`;
-    if (unit) address = `${unit} - ${address}`;
-    address += `, ${city}, ON ${postal}`;
-    const payload = {
-      type: 'landlord',
-      first_name: document.getElementById('firstName').value,
-      last_name: document.getElementById('lastName').value,
-      email: document.getElementById('email').value,
-      phone: document.getElementById('phone').value,
-      property_address: address,
-      house_type: document.getElementById('houseType').value,
-      levels: document.getElementById('levels').value,
-      basement_entrance: document.getElementById('basementEntrance')?.value || null,
-      bedrooms: document.getElementById('bedrooms').value,
-      bathrooms: document.getElementById('bathrooms').value,
-      kitchen: document.getElementById('kitchen').value,
-      garage: document.getElementById('garage').value,
-      expected_rent: parseFloat(document.getElementById('expectedRent').value) || null,
-      utilities: document.getElementById('utilities').value
-    };
-    try {
-      const res = await fetch(`${API_BASE}/lead/submit`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (data.success) {
-        showToast('Inquiry sent! We will contact you soon.');
-        e.target.reset();
-      } else throw new Error(data.error);
-    } catch (err) {
-      showToast('Error: ' + err.message);
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = 'Submit Inquiry';
+    <!-- Form Body -->
+    <div class="form-body">
+      <form id="landlordForm">
+        <!-- Basic Information Section -->
+        <h3 class="section-title"><i class="fas fa-user"></i> Basic Information</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First Name *</label>
+            <input type="text" id="firstName" name="firstName" required>
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name *</label>
+            <input type="text" id="lastName" name="lastName" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number *</label>
+            <input type="tel" id="phone" name="phone" required>
+          </div>
+        </div>
+
+        <!-- Property Address Section -->
+        <h3 class="section-title"><i class="fas fa-map-marker-alt"></i> Property Address</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="unit">Unit / Suite (optional)</label>
+            <input type="text" id="unit" name="unit" placeholder="e.g., Apt 401">
+          </div>
+          <div class="form-group">
+            <label for="streetNo">Street Number *</label>
+            <input type="text" id="streetNo" name="streetNo" required placeholder="e.g., 123">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="streetName">Street Name *</label>
+            <input type="text" id="streetName" name="streetName" required placeholder="e.g., Main Street">
+          </div>
+          <div class="form-group">
+            <label for="city">City *</label>
+            <input type="text" id="city" name="city" required placeholder="e.g., Windsor">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="postalCode">Postal Code *</label>
+            <input type="text" id="postalCode" name="postalCode" required placeholder="e.g., N8X 1A1">
+          </div>
+        </div>
+
+        <!-- Property Specification Section -->
+        <h3 class="section-title"><i class="fas fa-home"></i> Property Specification</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="houseType">House Type</label>
+            <select id="houseType" name="houseType">
+              <option value="">Select a type</option>
+              <option value="Single Family">Single Family</option>
+              <option value="Full House">Full House</option>
+              <option value="Basement">Basement</option>
+              <option value="Upper Portion">Upper Portion</option>
+              <option value="Condo">Condo</option>
+              <option value="Apartment">Apartment</option>
+              <option value="Townhouse">Townhouse</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="levels">Levels</label>
+            <select id="levels" name="levels">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group conditional-field" id="basementGroup">
+            <label for="basementEntrance">Basement Entrance</label>
+            <select id="basementEntrance" name="basementEntrance">
+              <option value="Separate">Separate</option>
+              <option value="Combined - No separation">Combined - No separation</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bedrooms">Bedrooms</label>
+            <select id="bedrooms" name="bedrooms">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7+">7+</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="bathrooms">Bathrooms</label>
+            <select id="bathrooms" name="bathrooms">
+              <option value="1">1</option>
+              <option value="1.5">1.5</option>
+              <option value="2">2</option>
+              <option value="2.5">2.5</option>
+              <option value="3">3</option>
+              <option value="3.5">3.5</option>
+              <option value="4">4</option>
+              <option value="4.5">4.5</option>
+              <option value="5+">5+</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="kitchen">Kitchen</label>
+            <select id="kitchen" name="kitchen">
+              <option value="1">1</option>
+              <option value="2">2</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="garage">Garage / Parking</label>
+            <select id="garage" name="garage">
+              <option value="No Garage">No Garage</option>
+              <option value="Single Car Garage">Single Car Garage</option>
+              <option value="Double Car Garage">Double Car Garage</option>
+              <option value="Street Parking">Street Parking</option>
+              <option value="Parking Lot">Parking Lot</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="expectedRent">Expected Monthly Rent ($)</label>
+            <input type="number" id="expectedRent" name="expectedRent" step="0.01" min="0">
+          </div>
+          <div class="form-group">
+            <label for="utilities">Utilities</label>
+            <select id="utilities" name="utilities">
+              <option value="Included">Included</option>
+              <option value="Excluded">Excluded</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="submit" class="submit-btn">
+            <i class="fas fa-paper-plane"></i> Submit Inquiry
+          </button>
+        </div>
+      </form>
+
+      <!-- Success State -->
+      <div class="success-state" id="successState">
+        <div class="success-icon">
+          <i class="fas fa-check"></i>
+        </div>
+        <h2>Thank You!</h2>
+        <p>Your inquiry has been received. Our team will contact you within 24 hours.</p>
+        <button class="submit-btn" onclick="location.href='index.html'" style="grid-column: auto;">
+          <i class="fas fa-arrow-left"></i> Back to Home
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMsg">Success!</span>
+  </div>
+
+  <script>
+    const API_BASE = 'https://leasenexus.onrender.com/api';
+
+    // Show/hide basement entrance field
+    document.getElementById('levels').addEventListener('change', function() {
+      const basementGroup = document.getElementById('basementGroup');
+      if (this.value === '2' || this.value === '3') {
+        basementGroup.classList.add('active');
+      } else {
+        basementGroup.classList.remove('active');
+      }
+    });
+
+    // Phone formatting
+    function formatPhone(input) {
+      let val = input.value.replace(/\D/g, '');
+      if (val.length >= 6) {
+        val = val.replace(/^(\d{3})(\d{3})(\d{0,4})/, '($1) $2-$3');
+      } else if (val.length >= 3) {
+        val = val.replace(/^(\d{3})(\d{0,3})/, '($1) $2');
+      }
+      input.value = val.trim();
     }
-  });
-</script>
+
+    document.getElementById('phone').addEventListener('input', function() {
+      formatPhone(this);
+    });
+
+    // Show toast
+    function showToast(msg, type = 'success') {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      toast.classList.remove('success', 'error');
+      toast.classList.add('active', type);
+      setTimeout(() => toast.classList.remove('active'), 3000);
+    }
+
+    // Form submission
+    document.getElementById('landlordForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const btn = e.target.querySelector('button[type="submit"]');
+      const originalHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Submitting...';
+
+      // Concatenate address
+      const unit = document.getElementById('unit').value;
+      const streetNo = document.getElementById('streetNo').value;
+      const streetName = document.getElementById('streetName').value;
+      const city = document.getElementById('city').value;
+      const postal = document.getElementById('postalCode').value;
+
+      let address = `${streetNo} ${streetName}`;
+      if (unit) address = `${unit} - ${address}`;
+      address += `, ${city}, ON ${postal}`;
+
+      const payload = {
+        type: 'landlord',
+        first_name: document.getElementById('firstName').value,
+        last_name: document.getElementById('lastName').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        property_address: address,
+        house_type: document.getElementById('houseType').value,
+        levels: document.getElementById('levels').value,
+        basement_entrance: document.getElementById('basementEntrance')?.value || null,
+        bedrooms: document.getElementById('bedrooms').value,
+        bathrooms: document.getElementById('bathrooms').value,
+        kitchen: document.getElementById('kitchen').value,
+        garage: document.getElementById('garage').value,
+        expected_rent: parseFloat(document.getElementById('expectedRent').value) || null,
+        utilities: document.getElementById('utilities').value
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/lead/submit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          showToast('Inquiry submitted successfully!');
+          e.target.style.display = 'none';
+          document.getElementById('successState').classList.add('active');
+        } else {
+          throw new Error(data.error || 'Unknown error');
+        }
+      } catch (err) {
+        showToast('Error: ' + err.message, 'error');
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
+      }
+    });
+  </script>
 </body>
 </html>

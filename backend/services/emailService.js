@@ -1,103 +1,305 @@
+// backend/services/emailService.js
+// SendGrid email service for automated notifications
+// Sends branded HTML emails to clients and management
+
 const sgMail = require('@sendgrid/mail');
 const apiKey = process.env.SENDGRID_API_KEY;
 
+// Initialize SendGrid
 if (apiKey) {
   sgMail.setApiKey(apiKey);
-  console.log('✅ SendGrid initialised');
+  console.log('✅ SendGrid initialized');
 } else {
-  console.warn('⚠️ SENDGRID_API_KEY not set – email disabled');
+  console.warn('⚠️ SENDGRID_API_KEY not set – email functionality disabled');
 }
 
+/**
+ * Send email asynchronously in the background
+ * Uses setImmediate to prevent blocking the response
+ */
 function sendEmailAsync(msg) {
-  if (!apiKey) return;
+  if (!apiKey) {
+    console.warn('📧 Email service disabled - no API key');
+    return;
+  }
+
   setImmediate(() => {
-    sgMail.send(msg).catch(err => console.error('SendGrid error:', err.response?.body || err.message));
+    sgMail.send(msg)
+      .then(() => {
+        console.log(`✅ Email sent to: ${msg.to}`);
+      })
+      .catch(err => {
+        console.error('❌ SendGrid error:', err.response?.body || err.message);
+      });
   });
 }
 
-// Helper to format a table row
+/**
+ * Format table row for email
+ * Creates a styled HTML table row
+ */
 function formatRow(label, value) {
-  if (!value || value === 'null' || value === 'undefined') return '';
-  return `<tr><td style="padding: 10px; background: #f8fafc; font-weight: 600; width: 35%; border-bottom: 1px solid #e2e8f0;">${label}</td><td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${value}</td></tr>`;
+  if (!value || value === 'null' || value === 'undefined' || value === null) return '';
+  
+  return `
+    <tr>
+      <td style="padding: 10px 12px; background: #f8fafc; font-weight: 600; width: 35%; border-bottom: 1px solid #e2e8f0; color: #0f172a;">
+        ${label}
+      </td>
+      <td style="padding: 10px 12px; border-bottom: 1px solid #e2e8f0; color: #64748b;">
+        ${value}
+      </td>
+    </tr>
+  `;
 }
 
-// AUTO-REPLY TO CLIENT (simple, branded)
-async function sendAutoReply({ name, email, message }) {
-  const html = `
-<div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 550px; margin: 0 auto; background: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);">
-  <div style="background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%); padding: 30px 20px; text-align: center;">
-    <div style="font-size: 42px; font-weight: 800; color: white;">Lease Nexus</div>
-    <div style="font-size: 13px; color: #ecc94b; letter-spacing: 2px;">PROPERTY MANAGEMENT</div>
-  </div>
-  <div style="padding: 30px 25px;">
-    <h2 style="color: #1a365d; margin-top: 0;">Hello ${name},</h2>
-    <p style="color: #334155;">Thank you for reaching out to <strong>Lease Nexus</strong>. We have received your inquiry and our team will review it promptly.</p>
-    <p style="color: #334155;">We will contact you within 24 hours. In the meantime, feel free to use our ROI calculator.</p>
-    <div style="text-align: center; margin: 30px 0;">
-      <a href="https://osmanians.github.io/leasenexus/#calculator" style="background: #1a365d; color: white; padding: 10px 24px; border-radius: 40px; text-decoration: none;">Calculate ROI Now</a>
-    </div>
-    <hr style="border: none; border-top: 1px solid #e2e8f0;">
-    <p style="font-size: 12px; color: #64748b;">Lease Nexus Property Management<br>1-800-LEASE-01 | info@leasenexus.com</p>
-  </div>
-</div>`;
-  const msg = { to: email, from: 'desinest.ca@gmail.com', subject: 'Thank you for contacting Lease Nexus', html };
-  sendEmailAsync(msg);
-}
-
-// MANAGEMENT NOTIFICATION (full details in a clean table)
-async function sendManagementNotification({ name, email, phone, message, propertyInterest }) {
-  // message is a JSON string from lead.js – we parse it
-  let details = {};
+/**
+ * Send auto-reply to client
+ * Confirms receipt of their inquiry and provides next steps
+ */
+async function sendAutoReply({ name, email, type, location }) {
   try {
-    details = JSON.parse(message);
-  } catch(e) {
-    details = { raw: message };
-  }
+    let subject = 'Thank You for Contacting Lease Nexus';
+    let headerText = 'We Received Your Inquiry';
+    let bodyText = 'Thank you for reaching out to Lease Nexus.';
+    let actionLink = 'https://leasenexus.onrender.com/';
+    let actionText = 'View Your Estimate';
 
-  // Build the table rows dynamically
-  let rows = '';
-  rows += formatRow('Type', details.type === 'landlord' ? '🏢 Landlord Inquiry' : '🏠 Tenant Inquiry');
-  rows += formatRow('Full Name', `${details.first_name || ''} ${details.last_name || ''}`.trim() || name);
-  rows += formatRow('Email', details.email || email);
-  rows += formatRow('Phone', details.phone || phone);
-  
-  if (details.type === 'landlord') {
-    rows += formatRow('Property Address', details.property_address || 'N/A');
-  } else {
-    rows += formatRow('Preferred Area', details.preferred_area || 'N/A');
-  }
-  
-  rows += formatRow('House Type', details.house_type || 'N/A');
-  rows += formatRow('Levels', details.levels || 'N/A');
-  if (details.levels && (details.levels === '2' || details.levels === '3')) {
-    rows += formatRow('Basement Entrance', details.basement_entrance || 'N/A');
-  }
-  rows += formatRow('Bedrooms', details.bedrooms || 'N/A');
-  rows += formatRow('Bathrooms', details.bathrooms || 'N/A');
-  rows += formatRow('Kitchen', details.kitchen || 'N/A');
-  rows += formatRow('Garage', details.garage || 'N/A');
-  rows += formatRow('Expected Monthly Rent', details.expected_rent ? `$${details.expected_rent}` : 'N/A');
-  rows += formatRow('Utilities', details.utilities || 'N/A');
+    if (type === 'landlord') {
+      headerText = 'We Received Your Property Inquiry';
+      bodyText = `Thank you for submitting your property at <strong>${location}</strong>. Our team will review your details and contact you soon.`;
+      subject = 'Property Inquiry Received - Lease Nexus';
+      actionLink = 'https://leasenexus.onrender.com/';
+      actionText = 'Check Our Services';
+    } else if (type === 'tenant') {
+      headerText = 'We Received Your Tenant Application';
+      bodyText = `Thank you for your interest in finding a home in <strong>${location}</strong>. We'll match you with available properties and contact you soon.`;
+      subject = 'Application Received - Lease Nexus';
+      actionLink = 'https://leasenexus.onrender.com/';
+      actionText = 'Browse Properties';
+    } else if (type === 'contact') {
+      headerText = 'We Received Your Message';
+      bodyText = 'Thank you for contacting us. We appreciate your inquiry and will get back to you as soon as possible.';
+      subject = 'Message Received - Lease Nexus';
+      actionLink = 'https://leasenexus.onrender.com/';
+      actionText = 'Visit Our Website';
+    }
 
-  const html = `
-<div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 700px; margin: 0 auto; background: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);">
-  <div style="background: #1a365d; padding: 20px 25px; color: white;">
-    <h2 style="margin: 0; font-size: 1.5rem;">Lease Nexus – New Lead</h2>
-    <p style="margin: 5px 0 0; color: #ecc94b; font-size: 0.9rem;">${details.type === 'landlord' ? '🏢 Property Management Inquiry' : '🏠 Tenant Inquiry'}</p>
-  </div>
-  <div style="padding: 20px 25px;">
-    <table style="width: 100%; border-collapse: collapse;">
-      ${rows}
-    </table>
-    <div style="margin-top: 20px; padding: 15px; background: #fef9e6; border-left: 4px solid #d69e2e; border-radius: 12px;">
-      <strong>⚠️ Action required</strong><br>Please respond to this inquiry within 24 hours to maintain our 98% satisfaction rate.
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; background: #f8fafc; padding: 20px; }
+    .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #3b82f6 100%); color: white; padding: 40px 20px; text-align: center; }
+    .header h1 { margin: 0; font-size: 28px; font-weight: 700; }
+    .header p { margin: 8px 0 0 0; font-size: 14px; opacity: 0.9; }
+    .content { padding: 30px 25px; }
+    .content p { margin: 0 0 15px 0; color: #334155; line-height: 1.8; }
+    .button { display: inline-block; background: linear-gradient(135deg, #3b82f6, #06b6d4); color: white; padding: 12px 28px; border-radius: 25px; text-decoration: none; font-weight: 600; margin: 20px 0; }
+    .button:hover { opacity: 0.9; }
+    .footer { background: #0f172a; color: white; padding: 20px; text-align: center; font-size: 12px; }
+    .footer p { margin: 5px 0; opacity: 0.8; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <h1>Lease Nexus</h1>
+        <p>Premium Property Management</p>
+      </div>
+      <div class="content">
+        <h2 style="color: #0f172a; margin-top: 0;">Hello ${name},</h2>
+        <p>${bodyText}</p>
+        <p>Our dedicated team is reviewing your information and will reach out within 24 hours. We're committed to providing you with the best service possible.</p>
+        <center>
+          <a href="${actionLink}" class="button">${actionText}</a>
+        </center>
+        <p style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 14px;">
+          If you have any questions in the meantime, feel free to reply to this email or contact us at:
+          <br><strong>📞 1-800-LEASE-01</strong>
+          <br><strong>📧 info@leasenexus.com</strong>
+        </p>
+      </div>
+      <div class="footer">
+        <p><strong>Lease Nexus</strong> | Premium Property Management Platform</p>
+        <p>1976 McKay Ave, Windsor, ON N9B 0A1 | Canada</p>
+        <p style="margin-top: 10px; opacity: 0.6;">© 2025 Lease Nexus. All rights reserved.</p>
+      </div>
     </div>
-    <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
-    <p style="font-size: 12px; color: #64748b;">This is an automated message from your website backend. Do not reply directly to this email.</p>
   </div>
-</div>`;
-  const msg = { to: process.env.MANAGEMENT_EMAIL, from: 'desinest.ca@gmail.com', subject: `New Lead: ${name} (${details.type || 'inquiry'})`, html };
-  sendEmailAsync(msg);
+</body>
+</html>
+    `;
+
+    const msg = {
+      to: email,
+      from: 'desinest.ca@gmail.com',
+      subject: subject,
+      html: html
+    };
+
+    sendEmailAsync(msg);
+  } catch (err) {
+    console.error('Auto-reply email error:', err);
+  }
 }
 
-module.exports = { sendAutoReply, sendManagementNotification };
+/**
+ * Send management notification
+ * Alerts management team about new leads with full details
+ */
+async function sendManagementNotification({
+  name,
+  email,
+  phone,
+  type,
+  leadType,
+  location,
+  leadData,
+  leadId,
+  additionalInfo
+}) {
+  try {
+    const managementEmail = process.env.MANAGEMENT_EMAIL || 'shahido@live.com, usmansafdar.uos@gmail.com';
+
+    // Build dynamic table rows based on lead type
+    let rows = '';
+    rows += formatRow('Lead Type', leadType);
+    rows += formatRow('Name', name);
+    rows += formatRow('Email', email);
+    rows += formatRow('Phone', phone);
+    rows += formatRow('Location', location);
+
+    // Add property/preference details
+    if (leadData) {
+      rows += formatRow('House Type', leadData.house_type);
+      rows += formatRow('Levels', leadData.levels);
+      
+      if (leadData.levels && (leadData.levels === '2' || leadData.levels === '3')) {
+        rows += formatRow('Basement Entrance', leadData.basement_entrance || 'N/A');
+      }
+      
+      rows += formatRow('Bedrooms', leadData.bedrooms);
+      rows += formatRow('Bathrooms', leadData.bathrooms);
+      rows += formatRow('Kitchen', leadData.kitchen);
+      rows += formatRow('Garage', leadData.garage);
+      
+      if (leadData.expected_rent) {
+        rows += formatRow('Expected Rent', `$${parseFloat(leadData.expected_rent).toFixed(2)}/month`);
+      }
+      
+      rows += formatRow('Utilities', leadData.utilities);
+    }
+
+    // Add additional info if present
+    if (additionalInfo) {
+      if (additionalInfo.role) {
+        rows += formatRow('Role', additionalInfo.role);
+      }
+      if (additionalInfo.service) {
+        rows += formatRow('Service Interested', additionalInfo.service);
+      }
+      if (additionalInfo.contactMethod) {
+        rows += formatRow('Preferred Contact', additionalInfo.contactMethod);
+      }
+      if (additionalInfo.bestTime) {
+        rows += formatRow('Best Time to Contact', additionalInfo.bestTime);
+      }
+    }
+
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 800px; margin: 0 auto; background: #f8fafc; padding: 20px; }
+    .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .header { background: #0f172a; color: white; padding: 25px 20px; }
+    .header h1 { margin: 0; font-size: 24px; font-weight: 700; }
+    .header p { margin: 8px 0 0 0; font-size: 14px; color: #06b6d4; }
+    .content { padding: 25px; }
+    .content h3 { color: #0f172a; margin-top: 0; }
+    table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+    td { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; }
+    .alert { background: #fef9e6; border-left: 4px solid #d69e2e; padding: 15px; border-radius: 8px; margin: 20px 0; }
+    .alert strong { color: #b45309; }
+    .footer { background: #0f172a; color: white; padding: 15px; text-align: center; font-size: 12px; }
+    .footer p { margin: 5px 0; opacity: 0.8; }
+    .badge { display: inline-block; background: #3b82f6; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <h1>📊 New Lead Submission</h1>
+        <p>${leadType}</p>
+      </div>
+      <div class="content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3 style="margin: 0;">Lead Details - ID: ${leadId || 'N/A'}</h3>
+          <span class="badge">${type.toUpperCase()}</span>
+        </div>
+
+        <table>
+          ${rows}
+        </table>
+
+        <div class="alert">
+          <strong>⏰ Action Required:</strong><br>
+          Please review this inquiry and respond within 24 hours to maintain our 98% satisfaction rate.
+        </div>
+
+        <div style="background: #f1f5f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
+          <h4 style="margin-top: 0; color: #0f172a;">Quick Actions:</h4>
+          <ul style="margin: 10px 0; padding-left: 20px;">
+            <li>Review the lead details above</li>
+            <li>Contact ${name} at ${email} or ${phone}</li>
+            <li>Update lead status in your CRM</li>
+            <li>Schedule follow-up if needed</li>
+          </ul>
+        </div>
+
+        <p style="font-size: 12px; color: #64748b; margin-top: 25px; padding-top: 15px; border-top: 1px solid #e2e8f0;">
+          <strong>Submitted:</strong> ${new Date().toLocaleString()}<br>
+          <strong>Lead Source:</strong> Lease Nexus Website<br>
+          <strong>Contact Preference:</strong> Email / Phone
+        </p>
+      </div>
+      <div class="footer">
+        <p><strong>Lease Nexus Management System</strong></p>
+        <p>This is an automated notification. Do not reply directly to this email.</p>
+        <p>© 2025 Lease Nexus. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+    `;
+
+    const msg = {
+      to: managementEmail,
+      from: 'desinest.ca@gmail.com',
+      subject: `New Lead: ${name} (${type === 'landlord' ? '🏢' : '🏠'} ${type})`,
+      html: html
+    };
+
+    sendEmailAsync(msg);
+  } catch (err) {
+    console.error('Management notification error:', err);
+  }
+}
+
+module.exports = {
+  sendAutoReply,
+  sendManagementNotification
+};
