@@ -39,7 +39,7 @@ async function sendAutoReply({ name, email, message }) {
 </div>`;
   const msg = {
     to: email,
-    from: 'noreply@leasenexus.com',   // MUST be verified in SendGrid
+    from: 'desinest.ca@gmail.com',   // MUST be verified in SendGrid
     subject: 'Thank you for contacting Lease Nexus',
     html
   };
