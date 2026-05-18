@@ -2530,59 +2530,45 @@
   // ============================================
   // EXCEL DOWNLOAD
   // ============================================
-  window.downloadExcel = async function () {
-  if (!currentEstimateData.avgRent) {
-    showToast('Please calculate an estimate first', 'error');
-    return;
-  }
+  window.downloadExcel = function () {
+    if (!currentEstimateData.avgRent) return showToast('Please calculate an estimate first', 'error');
 
-  try {
-    showToast('Generating professional report...', 'success');
-    
-    const response = await fetch(`${API_BASE}/excel/generate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: currentEstimateData.name || 'Client',
-        email: currentEstimateData.email || 'info@leasenexus.com',
-        phone: currentEstimateData.phone || '1-800-LEASE-01',
-        address: currentEstimateData.address || 'Not specified',
-        postal: currentEstimateData.postal || 'N/A',
-        propertyType: currentEstimateData.propertyType || 'Apartment',
-        bedrooms: currentEstimateData.beds || '1',
-        bathrooms: currentEstimateData.baths || '1',
-        sqft: currentEstimateData.sqft || 1000,
-        parking: currentEstimateData.parking || '0',
-        avgRent: currentEstimateData.avgRent,
-        minRent: currentEstimateData.minRent,
-        maxRent: currentEstimateData.maxRent,
-        avgPricePerSqft: currentEstimateData.ratePerSqft,
-        marketArea: currentEstimateData.market,
-        province: 'ON',
-        comparableListings: 15
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to generate report');
-    }
-
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `LeaseNexus_Valuation_${(currentEstimateData.name || 'Report').replace(/\s+/g, '_')}_${new Date().getFullYear()}.xlsx`;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
-
-    showToast('Report downloaded successfully! Check your downloads folder.', 'success');
-  } catch (err) {
-    console.error('Excel download error:', err);
-    showToast('Error generating report: ' + err.message, 'error');
-  }
-};;
+    const wb = XLSX.utils.book_new();
+    const sheet = XLSX.utils.aoa_to_sheet([
+      ['LEASE NEXUS PROPERTY VALUATION REPORT', ''],
+      ['', ''],
+      ['CLIENT INFORMATION', ''],
+      ['Name', currentEstimateData.name || 'N/A'],
+      ['Email', currentEstimateData.email || 'N/A'],
+      ['Phone', currentEstimateData.phone || 'N/A'],
+      ['', ''],
+      ['PROPERTY DETAILS', ''],
+      ['Address', currentEstimateData.address || 'N/A'],
+      ['Postal Code', currentEstimateData.postal || 'N/A'],
+      ['Property Type', currentEstimateData.propertyType || 'N/A'],
+      ['Bedrooms', currentEstimateData.beds || 'N/A'],
+      ['Bathrooms', currentEstimateData.baths || 'N/A'],
+      ['Square Footage', currentEstimateData.sqft || 'N/A'],
+      ['Parking Spaces', currentEstimateData.parking || 'N/A'],
+      ['', ''],
+      ['MARKET ANALYSIS', ''],
+      ['Market Area', currentEstimateData.market || 'N/A'],
+      ['Average Monthly Rent', `$${currentEstimateData.avgRent}`],
+      ['Minimum Estimate', `$${currentEstimateData.minRent}`],
+      ['Maximum Estimate', `$${currentEstimateData.maxRent}`],
+      ['Price Per Sqft', `$${currentEstimateData.ratePerSqft}`],
+      ['', ''],
+      ['NOTES', ''],
+      [currentEstimateData.notes || 'No notes provided'],
+      ['', ''],
+      ['Report Generated', currentEstimateData.date],
+      ['', ''],
+      ['Disclaimer', 'This is an AI-generated estimate. For a professional valuation, please contact our team.']
+    ]);
+    XLSX.utils.book_append_sheet(wb, sheet, 'Valuation Report');
+    XLSX.writeFile(wb, `LeaseNexus_Valuation_${currentEstimateData.name || 'client'}.xlsx`);
+    showToast('Report downloaded successfully!');
+  };
 
   document.getElementById('downloadExcelBtn').addEventListener('click', window.downloadExcel);
 
@@ -2626,62 +2612,6 @@
         document.getElementById('navLinks').style.display = 'none';
       });
     });
-  });
-
-  // ================================
-  // Workflow Carousel Functions
-  // ================================
-  let currentSlide = 0;
-  let slides = document.querySelectorAll('.carousel-slide');
-  let totalSlides = slides.length;
-
-  function goToSlide(n) {
-    currentSlide = n;
-    const track = document.getElementById('carousel');
-    if (track) {
-      track.style.transform = `translateX(-${currentSlide * 100}%)`;
-      
-      const dots = document.querySelectorAll('.dot');
-      dots.forEach(dot => dot.classList.remove('active'));
-      if (dots[currentSlide]) dots[currentSlide].classList.add('active');
-      
-      const stepDisplay = document.getElementById('current-step');
-      if (stepDisplay) stepDisplay.textContent = currentSlide + 1;
-    }
-  }
-
-  function carouselNext() {
-    if (!slides || slides.length === 0) return;
-    currentSlide = (currentSlide + 1) % slides.length;
-    goToSlide(currentSlide);
-  }
-
-  function carouselPrev() {
-    if (!slides || slides.length === 0) return;
-    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-    goToSlide(currentSlide);
-  }
-
-  // Column toggle for mobile
-  function toggleColumn(type) {
-    const contentId = type === 'landlord' ? 'landlord-content' : 'tenant-content';
-    const buttonClass = type === 'landlord' ? '.landlord-column .column-toggle' : '.tenant-column .column-toggle';
-    
-    const content = document.getElementById(contentId);
-    const button = document.querySelector(buttonClass);
-    
-    if (content && button) {
-      content.classList.toggle('active');
-      button.classList.toggle('active');
-    }
-  }
-
-  // Keyboard navigation
-  document.addEventListener('keydown', (e) => {
-    if (window.innerWidth <= 768) {
-      if (e.key === 'ArrowLeft') carouselPrev();
-      if (e.key === 'ArrowRight') carouselNext();
-    }
   });
 </script>
 </body>
