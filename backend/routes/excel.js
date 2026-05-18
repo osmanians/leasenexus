@@ -48,10 +48,10 @@ router.post('/generate', async (req, res) => {
       }
     });
 
-    // Set column widths
+    // Set column widths - FIXED: Auto-sized columns
     worksheet.columns = [
-      { width: 35 },
-      { width: 45 }
+      { width: 30, alignment: { horizontal: 'left' } },
+      { width: 50, alignment: { horizontal: 'right' } }
     ];
 
     // Define colors (Lease Nexus branding)
@@ -68,9 +68,9 @@ router.post('/generate', async (req, res) => {
     logoRow.height = 30;
     worksheet.mergeCells(`A${row}:B${row}`);
     let titleCell = worksheet.getCell(`A${row}`);
-    titleCell.value = '🏢 LEASE NEXUS';
+    titleCell.value = 'LEASE NEXUS';
     titleCell.font = { name: 'Calibri', size: 24, bold: true, color: { argb: darkColor } };
-    titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+    titleCell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
     titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: lightBg } };
     row++;
 
@@ -81,7 +81,7 @@ router.post('/generate', async (req, res) => {
     let subtitleCell = worksheet.getCell(`A${row}`);
     subtitleCell.value = 'PROPERTY VALUATION REPORT';
     subtitleCell.font = { name: 'Calibri', size: 14, color: { argb: primaryColor }, bold: true };
-    subtitleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+    subtitleCell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
     row++;
 
     // Tagline
@@ -90,7 +90,7 @@ router.post('/generate', async (req, res) => {
     let taglineCell = worksheet.getCell(`A${row}`);
     taglineCell.value = 'Better Tenants. Stronger Properties. Happier Owners.';
     taglineCell.font = { name: 'Calibri', size: 10, italic: true, color: { argb: 'FF64748B' } };
-    taglineCell.alignment = { horizontal: 'center', vertical: 'middle' };
+    taglineCell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
     row += 2;
 
     // ==================== CLIENT INFORMATION ====================
@@ -139,18 +139,18 @@ router.post('/generate', async (req, res) => {
     // Average Rent (Highlighted)
     let avgRow = worksheet.getRow(row);
     let avgLabel = worksheet.getCell(`A${row}`);
-    avgLabel.value = '💰 Average Monthly Rent';
-    avgLabel.font = { name: 'Calibri', size: 12, bold: true, color: { argb: darkColor } };
+    avgLabel.value = 'Average Monthly Rent';
+    avgLabel.font = { name: 'Calibri', size: 12, bold: true, color: { argb: 'FFFFFFFF' } };
     avgLabel.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: successColor } };
     avgLabel.border = { left: { style: 'medium' }, right: { style: 'medium' }, top: { style: 'medium' }, bottom: { style: 'medium' } };
-    avgLabel.alignment = { horizontal: 'left', vertical: 'center' };
+    avgLabel.alignment = { horizontal: 'left', vertical: 'center', wrapText: true };
 
     let avgValue = worksheet.getCell(`B${row}`);
     avgValue.value = `$${Number(avgRent).toLocaleString()}`;
     avgValue.font = { name: 'Calibri', size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
     avgValue.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: successColor } };
     avgValue.border = { left: { style: 'medium' }, right: { style: 'medium' }, top: { style: 'medium' }, bottom: { style: 'medium' } };
-    avgValue.alignment = { horizontal: 'right', vertical: 'center' };
+    avgValue.alignment = { horizontal: 'right', vertical: 'center', wrapText: true };
     avgRow.height = 26;
     row++;
 
@@ -187,12 +187,12 @@ router.post('/generate', async (req, res) => {
 
     let insightCell = worksheet.getCell(`A${row}`);
     worksheet.mergeCells(`A${row}:B${row}`);
-    const insight = `Based on current market data for ${marketArea}, ${province}, this ${bedrooms}-bedroom, ${bathrooms}-bathroom property in ${propertyType.toLowerCase()} format is estimated to generate approximately $${Number(avgRent).toLocaleString()} per month in rental income. The realistic market range is $${Number(minRent).toLocaleString()} - $${Number(maxRent).toLocaleString()}, with an average price of $${avgPricePerSqft}/sqft. This estimate is based on comparable properties in the area, current market conditions, and the property's specific characteristics. The property shows strong rental potential in the ${marketArea} market, with consistent demand for residential properties. Consider additional factors such as local economic growth, population trends, and property condition when making investment decisions.`;
+    const insight = `Based on current market data for ${marketArea}, ${province}, this ${bedrooms}-bedroom, ${bathrooms}-bathroom property in ${propertyType.toLowerCase()} format is estimated to generate approximately $${Number(avgRent).toLocaleString()} per month in rental income. The realistic market range is $${Number(minRent).toLocaleString()} - $${Number(maxRent).toLocaleString()}, with an average price of $${avgPricePerSqft}/sqft. This estimate is based on comparable properties in the area, current market conditions, and the property's specific characteristics.`;
     insightCell.value = insight;
-    insightCell.font = { name: 'Calibri', size: 10, color: { argb: '##334155' } };
+    insightCell.font = { name: 'Calibri', size: 10, color: { argb: '64748B' } };
     insightCell.alignment = { horizontal: 'left', vertical: 'top', wrapText: true };
-    worksheet.getRow(row).height = 80;
-    row += 4;
+    worksheet.getRow(row).height = 60;
+    row += 3;
 
     // ==================== NEXT STEPS ====================
     _addSection(worksheet, row, 'NEXT STEPS', primaryColor, darkColor);
@@ -200,7 +200,7 @@ router.post('/generate', async (req, res) => {
 
     let stepsCell = worksheet.getCell(`A${row}`);
     worksheet.mergeCells(`A${row}:B${row}`);
-    stepsCell.value = `1. Review this report with our team at 1-800-LEASE-01\n2. Schedule a property assessment visit\n3. Discuss property management services\n4. Sign lease agreement and begin earning income`;
+    stepsCell.value = '1. Review this report with our team at 1-800-LEASE-01\n2. Schedule a property assessment visit\n3. Discuss property management services\n4. Sign lease agreement and begin earning income';
     stepsCell.font = { name: 'Calibri', size: 10 };
     stepsCell.alignment = { horizontal: 'left', vertical: 'top', wrapText: true };
     worksheet.getRow(row).height = 60;
@@ -210,17 +210,17 @@ router.post('/generate', async (req, res) => {
     let contactRow = worksheet.getRow(row);
     worksheet.mergeCells(`A${row}:B${row}`);
     let contactCell = worksheet.getCell(`A${row}`);
-    contactCell.value = '📞 1-800-LEASE-01  |  📧 info@leasenexus.com  |  📍 1976 McKay Ave, Windsor, ON';
+    contactCell.value = 'Phone: 1-800-LEASE-01 | Email: info@leasenexus.com | Address: 1976 McKay Ave, Windsor, ON';
     contactCell.font = { name: 'Calibri', size: 9, bold: true, color: { argb: darkColor } };
-    contactCell.alignment = { horizontal: 'center', vertical: 'center' };
+    contactCell.alignment = { horizontal: 'center', vertical: 'center', wrapText: true };
     contactCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: lightBg } };
     row += 2;
 
     let disclaimerRow = worksheet.getRow(row);
     worksheet.mergeCells(`A${row}:B${row}`);
     let disclaimerCell = worksheet.getCell(`A${row}`);
-    disclaimerCell.value = '⚠️ DISCLAIMER: This is an AI-generated estimate based on market data and comparable properties. Actual rental rates may vary based on market conditions, property condition, local regulations, and economic factors. For a professional property appraisal, please consult a certified real estate appraiser.';
-    disclaimerCell.font = { name: 'Calibri', size: 8, italic: true, color: { argb: '##7C3AED' } };
+    disclaimerCell.value = 'DISCLAIMER: This is an AI-generated estimate based on market data and comparable properties. Actual rental rates may vary based on market conditions, property condition, local regulations, and economic factors. For a professional property appraisal, please consult a certified real estate appraiser.';
+    disclaimerCell.font = { name: 'Calibri', size: 8, italic: true, color: { argb: '7C3AED' } };
     disclaimerCell.alignment = { horizontal: 'left', vertical: 'top', wrapText: true };
     worksheet.getRow(row).height = 50;
     row += 3;
@@ -229,9 +229,9 @@ router.post('/generate', async (req, res) => {
     let footerRow = worksheet.getRow(row);
     worksheet.mergeCells(`A${row}:B${row}`);
     let footerCell = worksheet.getCell(`A${row}`);
-    footerCell.value = `© 2025 Lease Nexus. All Rights Reserved. | Generated ${new Date().toLocaleString()}`;
-    footerCell.font = { name: 'Calibri', size: 8, color: { argb: '##94A3B8' } };
-    footerCell.alignment = { horizontal: 'center', vertical: 'center' };
+    footerCell.value = `Copyright 2025 Lease Nexus. All Rights Reserved. | Generated ${new Date().toLocaleString()}`;
+    footerCell.font = { name: 'Calibri', size: 8, color: { argb: '94A3B8' } };
+    footerCell.alignment = { horizontal: 'center', vertical: 'center', wrapText: true };
 
     // Print settings
     worksheet.pageSetup.printArea = `A1:B${row}`;
@@ -249,7 +249,7 @@ router.post('/generate', async (req, res) => {
 
     res.send(buffer);
 
-    console.log(`✅ Excel report generated for: ${name} (${email})`);
+    console.log(`Successfully generated Excel report for: ${name} (${email})`);
 
   } catch (err) {
     console.error('Excel generation error:', err);
@@ -269,7 +269,7 @@ function _addSection(worksheet, row, title, bgColor, textColor) {
   cell.value = title;
   cell.font = { name: 'Calibri', size: 12, bold: true, color: { argb: textColor } };
   cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bgColor } };
-  cell.alignment = { horizontal: 'left', vertical: 'center' };
+  cell.alignment = { horizontal: 'left', vertical: 'center', wrapText: true };
   worksheet.getRow(row).height = 24;
 }
 
@@ -282,13 +282,13 @@ function _addInfoRow(worksheet, row, label, value) {
   labelCell.font = { name: 'Calibri', size: 11, bold: true };
   labelCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF0F4F8' } };
   labelCell.border = { left: { style: 'thin' }, right: { style: 'thin' }, top: { style: 'thin' }, bottom: { style: 'thin' } };
-  labelCell.alignment = { horizontal: 'left', vertical: 'center' };
+  labelCell.alignment = { horizontal: 'left', vertical: 'center', wrapText: true };
 
   const valueCell = worksheet.getCell(`B${row}`);
   valueCell.value = value;
   valueCell.font = { name: 'Calibri', size: 11 };
   valueCell.border = { left: { style: 'thin' }, right: { style: 'thin' }, top: { style: 'thin' }, bottom: { style: 'thin' } };
-  valueCell.alignment = { horizontal: 'right', vertical: 'center' };
+  valueCell.alignment = { horizontal: 'right', vertical: 'center', wrapText: true };
 
   worksheet.getRow(row).height = 20;
 }
