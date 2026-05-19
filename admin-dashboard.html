@@ -746,6 +746,7 @@
                 <th>Phone</th>
                 <th>Type</th>
                 <th>Status</th>
+                <th>Notes</th>
                 <th>Created</th>
                 <th>Actions</th>
               </tr>
@@ -807,7 +808,9 @@
   </div>
 
   <script>
-    const API_BASE = 'https://leasenexus.onrender.com/api';
+    const API_BASE = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000/api'
+  : 'https://leasenexus.onrender.com/api'
     // For local testing: const API_BASE = 'http://localhost:5000/api';
 
     let allLeads = [];
@@ -892,6 +895,7 @@
           <td>${lead.phone || 'N/A'}</td>
           <td>${lead.type === 'landlord' ? 'Landlord' : 'Tenant'}</td>
           <td><span class="status-badge status-${lead.status || 'new'}">${(lead.status || 'new').charAt(0).toUpperCase() + (lead.status || 'new').slice(1)}</span></td>
+          <td>${(lead.notes || '').substring(0, 50)}${(lead.notes || '').length > 50 ? '...' : ''}</td>
           <td>${createdDate}</td>
           <td class="action-cell">
             <button class="action-btn action-btn-edit" onclick="editLead(${lead.id}, '${lead.first_name}', '${lead.email}')">

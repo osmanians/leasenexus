@@ -1,26 +1,12 @@
 // backend/routes/admin.js
-// Admin authentication and leads management endpoints
+// Admin leads management endpoints
 
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const { createClient } = require('@supabase/supabase-js');
 const ExcelJS = require('exceljs');
 
-// Initialize Supabase
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
-);
-
-// JWT Secret
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
-
-// Admin credentials (in production, use database)
-const ADMIN_CREDENTIALS = {
-  email: 'admin@leasenexus.com',
-  password: 'admin123'
-};
 
 // Middleware: Verify JWT Token
 function verifyToken(req, res, next) {
@@ -46,66 +32,20 @@ function verifyToken(req, res, next) {
 }
 
 /**
- * POST /api/admin/login
- * Authenticate admin and return JWT token
- */
-router.post('/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    // Validate input
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        error: 'Email and password are required'
-      });
-    }
-
-    // Check credentials (in production, use database with hashed passwords)
-    if (email !== ADMIN_CREDENTIALS.email || password !== ADMIN_CREDENTIALS.password) {
-      return res.status(401).json({
-        success: false,
-        error: 'Invalid email or password'
-      });
-    }
-
-    // Create JWT token
-    const token = jwt.sign(
-      {
-        email: email,
-        role: 'admin'
-      },
-      JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
-    res.json({
-      success: true,
-      token: token,
-      user: {
-        email: email,
-        name: 'Admin User',
-        role: 'admin'
-      }
-    });
-
-    console.log(`Admin login: ${email}`);
-
-  } catch (err) {
-    console.error('Login error:', err);
-    res.status(500).json({
-      success: false,
-      error: 'Login failed'
-    });
-  }
-});
-
-/**
  * GET /api/admin/leads
  * Get all leads with filters
  */
 router.get('/leads', verifyToken, async (req, res) => {
   try {
+    const supabase = global.supabase;
+    
+    if (!supabase) {
+      return res.status(500).json({
+        success: false,
+        error: 'Supabase not initialized'
+      });
+    }
+
     const { status, type } = req.query;
 
     let query = supabase.from('leads').select('*');
@@ -150,6 +90,15 @@ router.get('/leads', verifyToken, async (req, res) => {
  */
 router.patch('/leads/:id/status', verifyToken, async (req, res) => {
   try {
+    const supabase = global.supabase;
+    
+    if (!supabase) {
+      return res.status(500).json({
+        success: false,
+        error: 'Supabase not initialized'
+      });
+    }
+
     const { id } = req.params;
     const { status, notes } = req.body;
 
@@ -205,6 +154,15 @@ router.patch('/leads/:id/status', verifyToken, async (req, res) => {
  */
 router.get('/export', verifyToken, async (req, res) => {
   try {
+    const supabase = global.supabase;
+    
+    if (!supabase) {
+      return res.status(500).json({
+        success: false,
+        error: 'Supabase not initialized'
+      });
+    }
+
     // Fetch all leads
     const { data: leads, error } = await supabase
       .from('leads')

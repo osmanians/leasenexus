@@ -379,8 +379,8 @@
     <div class="login-body">
       <div class="demo-notice">
         <strong>Demo Credentials:</strong>
-        Email: admin@leasenexus.com<br>
-        Password: admin123
+        Email: usmansafdar.uos@gmail.com<br>
+        Password: TestPassword123!
       </div>
 
       <div class="error-message" id="errorMessage"></div>
@@ -443,7 +443,9 @@
   </div>
 
   <script>
-    const API_BASE = 'https://leasenexus.onrender.com/api';
+    const API_BASE = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000/api'
+  : 'https://leasenexus.onrender.com/api'
     // For local testing, uncomment:
     // const API_BASE = 'http://localhost:5000/api';
 
@@ -493,7 +495,7 @@
       clearMessages();
 
       try {
-        const response = await fetch(`${API_BASE}/admin/login`, {
+        const response = await fetch(`${API_BASE}/admin/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })

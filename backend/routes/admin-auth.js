@@ -5,7 +5,6 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 
-const supabase = global.supabase;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
 /**
@@ -15,6 +14,15 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-producti
  */
 router.post('/auth/login', async (req, res) => {
   try {
+    const supabase = global.supabase;
+    
+    if (!supabase) {
+      return res.status(500).json({
+        success: false,
+        error: 'Supabase not initialized'
+      });
+    }
+
     const { email, password } = req.body;
 
     // Validate input
@@ -118,6 +126,8 @@ router.post('/auth/login', async (req, res) => {
  */
 router.post('/auth/signup', verifyToken, async (req, res) => {
   try {
+    const supabase = global.supabase;
+    
     const { email, password, fullName } = req.body;
 
     // Only existing admins can create new admins
@@ -200,6 +210,8 @@ router.post('/auth/signup', verifyToken, async (req, res) => {
  */
 router.post('/auth/logout', async (req, res) => {
   try {
+    const supabase = global.supabase;
+    
     const { error } = await supabase.auth.signOut();
 
     if (error) {
@@ -233,6 +245,8 @@ router.post('/auth/logout', async (req, res) => {
  */
 router.post('/auth/refresh', async (req, res) => {
   try {
+    const supabase = global.supabase;
+    
     const { refreshToken } = req.body;
 
     if (!refreshToken) {
@@ -289,6 +303,8 @@ router.post('/auth/refresh', async (req, res) => {
  */
 router.get('/auth/profile', verifyToken, async (req, res) => {
   try {
+    const supabase = global.supabase;
+    
     const { data, error } = await supabase
       .from('admin_profiles')
       .select('id, email, full_name, role, created_at, updated_at')
@@ -324,6 +340,8 @@ router.get('/auth/profile', verifyToken, async (req, res) => {
  */
 router.patch('/auth/profile', verifyToken, async (req, res) => {
   try {
+    const supabase = global.supabase;
+    
     const { fullName } = req.body;
 
     const { data, error } = await supabase
@@ -367,6 +385,8 @@ router.patch('/auth/profile', verifyToken, async (req, res) => {
  */
 router.post('/auth/change-password', verifyToken, async (req, res) => {
   try {
+    const supabase = global.supabase;
+    
     const { oldPassword, newPassword } = req.body;
 
     if (!oldPassword || !newPassword) {
@@ -419,6 +439,8 @@ router.post('/auth/change-password', verifyToken, async (req, res) => {
  */
 router.post('/auth/reset-password', async (req, res) => {
   try {
+    const supabase = global.supabase;
+    
     const { email } = req.body;
 
     if (!email) {
