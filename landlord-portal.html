@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Landlord Portal - Lease Nexus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    :root {
+      --primary: #0a0f1e;
+      --sidebar-bg: #0f172a;
+      --sidebar-w: 260px;
+      --accent: #2563eb;
+      --accent-light: #3b82f6;
+      --cyan: #06b6d4;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #f0f4ff;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06);
+      --radius: 12px;
+    }
+
+    html, body { height: 100%; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+
+    /* ===== LOGIN PAGE ===== */
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--primary) 0%, #0e1b3d 60%, #1a2855 100%);
+      padding: 2rem;
+    }
+
+    .login-card {
+      background: white;
+      border-radius: 20px;
+      padding: 3rem 2.5rem;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-logo {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--accent), var(--cyan));
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+      margin: 0 auto 1rem;
+    }
+
+    .login-header h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.25rem; }
+    .login-header p { font-size: 0.875rem; color: var(--text-muted); }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      color: var(--text);
+      background: #fafafa;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+      background: white;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 0.85rem;
+      background: linear-gradient(135deg, var(--accent), var(--cyan));
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-login:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .login-footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
+
+    .alert-msg {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .alert-error { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
+    .alert-success { background: #f0fdf4; color: #16a34a; border: 1px solid #86efac; }
+
+    /* ===== PORTAL LAYOUT ===== */
+    .portal { display: none; min-height: 100vh; }
+    .portal.active { display: flex; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--sidebar-bg);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-brand {
+      padding: 1.5rem 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .sidebar-brand .brand-ico {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent), var(--cyan));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .sidebar-brand span { font-weight: 800; font-size: 1.1rem; }
+
+    .sidebar-user {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .sidebar-user .user-role {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--cyan);
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+
+    .sidebar-user .user-name { font-size: 0.9rem; font-weight: 600; }
+    .sidebar-user .user-email { font-size: 0.75rem; color: #64748b; }
+
+    .sidebar-nav { padding: 1rem 0; flex: 1; }
+
+    .nav-section-label {
+      padding: 0.5rem 1.25rem;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #475569;
+      font-weight: 700;
+      margin-top: 0.5rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.7rem 1.25rem;
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
+    }
+
+    .nav-item:hover { color: white; background: rgba(255,255,255,0.05); }
+    .nav-item.active { color: white; background: rgba(37,99,235,0.15); border-left-color: var(--accent); }
+    .nav-item i { width: 16px; text-align: center; }
+
+    .sidebar-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .btn-logout {
+      width: 100%;
+      padding: 0.6rem;
+      background: rgba(239,68,68,0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover { background: rgba(239,68,68,0.2); }
+
+    /* MAIN CONTENT */
+    .main-content {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .topbar h2 { font-size: 1.2rem; font-weight: 700; }
+    .topbar-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+    .topbar-actions { display: flex; gap: 0.75rem; align-items: center; }
+
+    .page-content { padding: 2rem; display: none; }
+    .page-content.active { display: block; }
+
+    /* STATS CARDS */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+
+    .stat-card.blue::before { background: linear-gradient(90deg, var(--accent), var(--accent-light)); }
+    .stat-card.green::before { background: linear-gradient(90deg, var(--success), #34d399); }
+    .stat-card.orange::before { background: linear-gradient(90deg, var(--warning), #fbbf24); }
+    .stat-card.red::before { background: linear-gradient(90deg, var(--danger), #f87171); }
+
+    .stat-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .stat-card.blue .stat-icon { background: #eff6ff; color: var(--accent); }
+    .stat-card.green .stat-icon { background: #f0fdf4; color: var(--success); }
+    .stat-card.orange .stat-icon { background: #fffbeb; color: var(--warning); }
+    .stat-card.red .stat-icon { background: #fef2f2; color: var(--danger); }
+
+    .stat-value { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.25rem; }
+    .stat-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+    .stat-sub { font-size: 0.75rem; color: var(--text-light); margin-top: 0.25rem; }
+
+    /* PANELS */
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .panel-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-header h3 { font-size: 1rem; font-weight: 700; }
+    .panel-header p { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+    .panel-body { padding: 1.5rem; }
+
+    /* GRID LAYOUTS */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; }
+
+    /* TABLE */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      font-weight: 700;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid #f1f5f9;
+      color: var(--text);
+    }
+
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: #f8faff; }
+
+    /* BADGES */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+
+    .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+
+    .badge-open { background: #fef3c7; color: #d97706; }
+    .badge-open::before { background: #d97706; }
+    .badge-in-progress { background: #dbeafe; color: #2563eb; }
+    .badge-in-progress::before { background: #2563eb; }
+    .badge-resolved { background: #d1fae5; color: #059669; }
+    .badge-resolved::before { background: #059669; }
+    .badge-closed { background: #f1f5f9; color: #64748b; }
+    .badge-closed::before { background: #94a3b8; }
+    .badge-emergency { background: #fee2e2; color: #dc2626; }
+    .badge-emergency::before { background: #dc2626; }
+    .badge-high { background: #fef3c7; color: #b45309; }
+    .badge-medium { background: #dbeafe; color: #2563eb; }
+    .badge-low { background: #f1f5f9; color: #64748b; }
+    .badge-paid { background: #d1fae5; color: #059669; }
+    .badge-paid::before { background: #059669; }
+    .badge-pending { background: #fef3c7; color: #d97706; }
+    .badge-pending::before { background: #d97706; }
+    .badge-overdue { background: #fee2e2; color: #dc2626; }
+    .badge-overdue::before { background: #dc2626; }
+    .badge-partial { background: #fae8ff; color: #9333ea; }
+    .badge-partial::before { background: #9333ea; }
+
+    /* BUTTON */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1rem;
+      border-radius: 7px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+      font-family: inherit;
+    }
+
+    .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.75rem; }
+
+    .btn-blue { background: var(--accent); color: white; }
+    .btn-blue:hover { background: #1d4ed8; }
+
+    .btn-outline { background: white; color: var(--text); border: 1px solid var(--border); }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    .btn-success { background: var(--success); color: white; }
+    .btn-danger { background: var(--danger); color: white; }
+
+    /* SERVICE CALL STATUS BOARD */
+    .kanban-board {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .kanban-col {
+      background: #f8fafc;
+      border-radius: var(--radius);
+      padding: 0;
+      min-height: 300px;
+      overflow: hidden;
+    }
+
+    .kanban-col-header {
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .kanban-col.open .kanban-col-header { background: #fef3c7; color: #92400e; }
+    .kanban-col.progress .kanban-col-header { background: #dbeafe; color: #1e40af; }
+    .kanban-col.resolved .kanban-col-header { background: #d1fae5; color: #065f46; }
+    .kanban-col.closed .kanban-col-header { background: #f1f5f9; color: #475569; }
+
+    .kanban-count {
+      background: rgba(0,0,0,0.1);
+      border-radius: 100px;
+      padding: 0.1rem 0.5rem;
+      font-size: 0.7rem;
+    }
+
+    .kanban-cards { padding: 0.75rem; display: flex; flex-direction: column; gap: 0.75rem; }
+
+    .kanban-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .kanban-card:hover { border-color: var(--accent); box-shadow: var(--shadow); transform: translateY(-1px); }
+
+    .kanban-card-title { font-size: 0.825rem; font-weight: 600; margin-bottom: 0.4rem; line-height: 1.4; }
+    .kanban-card-meta { font-size: 0.72rem; color: var(--text-muted); display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .kanban-card-meta span { display: flex; align-items: center; gap: 0.25rem; }
+
+    /* PERFORMANCE CHART */
+    .perf-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .perf-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .perf-month { font-size: 0.8rem; color: var(--text-muted); width: 32px; font-weight: 600; }
+
+    .perf-bar-track {
+      flex: 1;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .perf-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--cyan));
+      border-radius: 100px;
+      transition: width 1s ease;
+    }
+
+    .perf-val { font-size: 0.8rem; font-weight: 700; width: 80px; text-align: right; }
+
+    /* SAVINGS WIDGET */
+    .savings-widget {
+      background: linear-gradient(135deg, var(--primary), #1a2855);
+      color: white;
+      border-radius: var(--radius);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .savings-widget .savings-amount {
+      font-size: 3rem;
+      font-weight: 900;
+      letter-spacing: -2px;
+      color: #34d399;
+      line-height: 1;
+      margin: 0.75rem 0;
+    }
+
+    .savings-widget .savings-label {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    .savings-breakdown {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .savings-item { text-align: center; }
+    .savings-item .s-val { font-size: 1.1rem; font-weight: 700; }
+    .savings-item .s-lbl { font-size: 0.7rem; color: #94a3b8; }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: white;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 { font-size: 1.1rem; font-weight: 700; }
+
+    .modal-close {
+      width: 32px; height: 32px;
+      border: none; background: var(--bg);
+      border-radius: 8px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 1rem;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover { background: #fee2e2; color: var(--danger); }
+
+    .modal-body { padding: 1.5rem; }
+
+    .modal-body .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    select.form-control { cursor: pointer; }
+    textarea.form-control { resize: vertical; min-height: 80px; }
+
+    /* TIMELINE */
+    .timeline { list-style: none; }
+
+    .timeline-item {
+      display: flex;
+      gap: 1rem;
+      padding-bottom: 1.25rem;
+      position: relative;
+    }
+
+    .timeline-item:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 16px;
+      top: 32px;
+      bottom: 0;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .timeline-dot {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .timeline-dot.open { border-color: var(--warning); color: var(--warning); }
+    .timeline-dot.progress { border-color: var(--accent); color: var(--accent); }
+    .timeline-dot.resolved { border-color: var(--success); color: var(--success); }
+
+    .timeline-content { flex: 1; }
+    .timeline-title { font-size: 0.85rem; font-weight: 600; }
+    .timeline-note { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem; }
+    .timeline-meta { font-size: 0.72rem; color: var(--text-light); margin-top: 0.3rem; }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state i { font-size: 2.5rem; opacity: 0.3; margin-bottom: 0.75rem; display: block; }
+    .empty-state p { font-size: 0.875rem; }
+
+    /* LOADING */
+    .loading-spinner {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+
+    .spinner {
+      width: 32px; height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .kanban-board { grid-template-columns: repeat(2, 1fr); }
+      .two-col { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .main-content { margin-left: 0; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* PROPERTY SELECTOR */
+    .property-selector {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background: #f8faff;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .property-selector label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
+
+    .property-select {
+      padding: 0.4rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-size: 0.85rem;
+      font-family: inherit;
+      background: white;
+      cursor: pointer;
+    }
+
+    /* NOTIFICATION */
+    .notification {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      box-shadow: var(--shadow);
+      z-index: 999;
+      max-width: 320px;
+      display: none;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    .notification.show { display: flex; align-items: center; gap: 0.75rem; }
+    .notification-text { font-size: 0.875rem; font-weight: 500; }
+  </style>
+</head>
+<body>
+
+<!-- NOTIFICATION TOAST -->
+<div class="notification" id="notification">
+  <span id="notif-icon"></span>
+  <span class="notification-text" id="notif-text"></span>
+</div>
+
+<!-- ===== LOGIN PAGE ===== -->
+<div class="login-page" id="loginPage">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-logo"><i class="fas fa-building"></i></div>
+      <h1>Landlord Portal</h1>
+      <p>Lease Nexus Property Management</p>
+    </div>
+
+    <div class="alert-msg alert-error" id="loginError"></div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" class="form-control" id="loginEmail" placeholder="you@example.com" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required>
+      </div>
+      <button type="submit" class="btn-login" id="loginBtn">
+        <i class="fas fa-sign-in-alt"></i> <span>Sign In to Portal</span>
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p>Not yet registered? <a href="landlord-contact.html">Submit a property inquiry</a></p>
+      <p style="margin-top:0.5rem;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PORTAL LAYOUT ===== -->
+<div class="portal" id="portal">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-ico"><i class="fas fa-building"></i></div>
+      <span>Lease Nexus</span>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="user-role">Landlord Portal</div>
+      <div class="user-name" id="sidebarName">Loading...</div>
+      <div class="user-email" id="sidebarEmail"></div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Overview</div>
+      <div class="nav-item active" onclick="showPage('dashboard')">
+        <i class="fas fa-th-large"></i> Dashboard
+      </div>
+
+      <div class="nav-section-label">Management</div>
+      <div class="nav-item" onclick="showPage('serviceCalls')">
+        <i class="fas fa-tools"></i> Service Calls
+      </div>
+      <div class="nav-item" onclick="showPage('rentLedger')">
+        <i class="fas fa-dollar-sign"></i> Rent Ledger
+      </div>
+
+      <div class="nav-section-label">Analytics</div>
+      <div class="nav-item" onclick="showPage('performance')">
+        <i class="fas fa-chart-line"></i> Performance
+      </div>
+      <div class="nav-item" onclick="showPage('savings')">
+        <i class="fas fa-piggy-bank"></i> Cost Savings
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div>
+        <h2 id="pageTitle">Dashboard</h2>
+        <div class="topbar-sub" id="pageSubtitle">Welcome back, overview of your properties</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-outline btn-sm" onclick="refreshData()">
+          <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+        <button class="btn btn-blue btn-sm" onclick="openNewServiceCall()">
+          <i class="fas fa-plus"></i> New Service Call
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== DASHBOARD PAGE ===== -->
+    <div class="page-content active" id="page-dashboard">
+      <div class="stats-row" id="dashboardStats">
+        <div class="stat-card blue">
+          <div class="stat-icon"><i class="fas fa-building"></i></div>
+          <div class="stat-value" id="statProperties">—</div>
+          <div class="stat-label">Properties</div>
+          <div class="stat-sub">Under management</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+          <div class="stat-value" id="statRentCollected">—</div>
+          <div class="stat-label">Rent Collected</div>
+          <div class="stat-sub" id="statRentMonth">This month</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-icon"><i class="fas fa-tools"></i></div>
+          <div class="stat-value" id="statOpenCalls">—</div>
+          <div class="stat-label">Open Service Calls</div>
+          <div class="stat-sub">Require attention</div>
+        </div>
+        <div class="stat-card red" style="--before-bg: linear-gradient(90deg, #10b981, #34d399);">
+          <div class="stat-icon" style="background:#f0fdf4;color:#10b981;"><i class="fas fa-piggy-bank"></i></div>
+          <div class="stat-value" id="statSavings" style="color:#10b981;">—</div>
+          <div class="stat-label">Saved vs DIY</div>
+          <div class="stat-sub">This month</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <!-- Recent Service Calls -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h3>Recent Service Calls</h3>
+              <p>Latest maintenance requests</p>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="showPage('serviceCalls')">View All</button>
+          </div>
+          <div id="recentCallsList">
+            <div class="loading-spinner"><div class="spinner"></div><p>Loading...</p></div>
+          </div>
+        </div>
+
+        <!-- Rent Summary -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h3>Rent Overview</h3>
+              <p id="rentOverviewMonth">Current month</p>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="showPage('rentLedger')">Full Ledger</button>
+          </div>
+          <div class="panel-body" id="rentSummaryBody">
+            <div class="loading-spinner"><div class="spinner"></div><p>Loading...</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Properties Overview -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h3>Your Properties</h3>
+            <p>All properties under management</p>
+          </div>
+        </div>
+        <div id="propertiesList">
+          <div class="loading-spinner"><div class="spinner"></div><p>Loading...</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SERVICE CALLS PAGE ===== -->
+    <div class="page-content" id="page-serviceCalls">
+      <div class="property-selector">
+        <label>Property:</label>
+        <select class="property-select" id="scPropertyFilter" onchange="loadServiceCalls()">
+          <option value="all">All Properties</option>
+        </select>
+        <label style="margin-left:1rem;">Status:</label>
+        <select class="property-select" id="scStatusFilter" onchange="loadServiceCalls()">
+          <option value="all">All Statuses</option>
+          <option value="open">Open</option>
+          <option value="in_progress">In Progress</option>
+          <option value="resolved">Resolved</option>
+          <option value="closed">Closed</option>
+        </select>
+      </div>
+
+      <div class="panel" style="margin:1.5rem;">
+        <div class="panel-header">
+          <div>
+            <h3>Service Calls Board</h3>
+            <p>Track all maintenance requests and their progress</p>
+          </div>
+          <button class="btn btn-blue btn-sm" onclick="openNewServiceCall()">
+            <i class="fas fa-plus"></i> New Call
+          </button>
+        </div>
+        <div class="panel-body">
+          <div class="kanban-board" id="kanbanBoard">
+            <div class="kanban-col open">
+              <div class="kanban-col-header">Open <span class="kanban-count" id="cnt-open">0</span></div>
+              <div class="kanban-cards" id="col-open"></div>
+            </div>
+            <div class="kanban-col progress">
+              <div class="kanban-col-header">In Progress <span class="kanban-count" id="cnt-progress">0</span></div>
+              <div class="kanban-cards" id="col-progress"></div>
+            </div>
+            <div class="kanban-col resolved">
+              <div class="kanban-col-header">Resolved <span class="kanban-count" id="cnt-resolved">0</span></div>
+              <div class="kanban-cards" id="col-resolved"></div>
+            </div>
+            <div class="kanban-col closed">
+              <div class="kanban-col-header">Closed <span class="kanban-count" id="cnt-closed">0</span></div>
+              <div class="kanban-cards" id="col-closed"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Service Calls Table -->
+      <div class="panel" style="margin:0 1.5rem 1.5rem;">
+        <div class="panel-header">
+          <h3>All Service Calls</h3>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Submitted</th>
+                <th>Est. Cost</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="serviceCallsTable">
+              <tr><td colspan="7"><div class="loading-spinner"><div class="spinner"></div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== RENT LEDGER PAGE ===== -->
+    <div class="page-content" id="page-rentLedger">
+      <div class="property-selector">
+        <label>Year:</label>
+        <select class="property-select" id="ledgerYear" onchange="loadRentLedger()"></select>
+        <label style="margin-left:1rem;">Month:</label>
+        <select class="property-select" id="ledgerMonth" onchange="loadRentLedger()">
+          <option value="all">All Months</option>
+          <option value="1">January</option><option value="2">February</option>
+          <option value="3">March</option><option value="4">April</option>
+          <option value="5">May</option><option value="6">June</option>
+          <option value="7">July</option><option value="8">August</option>
+          <option value="9">September</option><option value="10">October</option>
+          <option value="11">November</option><option value="12">December</option>
+        </select>
+        <label style="margin-left:1rem;">Status:</label>
+        <select class="property-select" id="ledgerStatus" onchange="loadRentLedger()">
+          <option value="all">All</option>
+          <option value="paid">Paid</option>
+          <option value="pending">Pending</option>
+          <option value="overdue">Overdue</option>
+          <option value="partial">Partial</option>
+        </select>
+      </div>
+
+      <!-- Ledger Summary -->
+      <div style="padding:1.5rem;">
+        <div class="three-col" style="margin-bottom:1.5rem;">
+          <div class="panel" style="margin:0;">
+            <div class="panel-body" style="padding:1.25rem;">
+              <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:0.4rem;">Total Expected</div>
+              <div style="font-size:1.75rem;font-weight:800;color:var(--text);" id="ledgerTotalExpected">—</div>
+            </div>
+          </div>
+          <div class="panel" style="margin:0;">
+            <div class="panel-body" style="padding:1.25rem;">
+              <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:0.4rem;">Total Collected</div>
+              <div style="font-size:1.75rem;font-weight:800;color:var(--success);" id="ledgerTotalCollected">—</div>
+            </div>
+          </div>
+          <div class="panel" style="margin:0;">
+            <div class="panel-body" style="padding:1.25rem;">
+              <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:0.4rem;">Collection Rate</div>
+              <div style="font-size:1.75rem;font-weight:800;color:var(--accent);" id="ledgerRate">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin:0;">
+          <div class="panel-header">
+            <h3>Monthly Rent Ledger</h3>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Tenant</th>
+                  <th>Property</th>
+                  <th>Period</th>
+                  <th>Amount Due</th>
+                  <th>Amount Paid</th>
+                  <th>Payment Date</th>
+                  <th>Method</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="rentLedgerTable">
+                <tr><td colspan="8"><div class="loading-spinner"><div class="spinner"></div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PERFORMANCE PAGE ===== -->
+    <div class="page-content" id="page-performance">
+      <div style="padding:1.5rem;">
+        <div class="stats-row" style="margin-bottom:1.5rem;">
+          <div class="stat-card green">
+            <div class="stat-icon"><i class="fas fa-percentage"></i></div>
+            <div class="stat-value" id="perfOccupancy">—</div>
+            <div class="stat-label">Occupancy Rate</div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-value" id="perfResolutionRate">—</div>
+            <div class="stat-label">Issue Resolution Rate</div>
+          </div>
+          <div class="stat-card orange">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div class="stat-value" id="perfAvgDays">—</div>
+            <div class="stat-label">Avg Resolution (Days)</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-icon"><i class="fas fa-arrow-up"></i></div>
+            <div class="stat-value" id="perfCollectionRate">—</div>
+            <div class="stat-label">Rent Collection Rate</div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="panel" style="margin:0;">
+            <div class="panel-header">
+              <h3>Monthly Rent Collection</h3>
+              <p>Collected vs Expected (Last 6 months)</p>
+            </div>
+            <div class="panel-body">
+              <div class="perf-bars" id="perfBars">
+                <div class="loading-spinner"><div class="spinner"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel" style="margin:0;">
+            <div class="panel-header">
+              <h3>Service Call Breakdown</h3>
+              <p>By category this year</p>
+            </div>
+            <div class="panel-body" id="scBreakdown">
+              <div class="loading-spinner"><div class="spinner"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SAVINGS PAGE ===== -->
+    <div class="page-content" id="page-savings">
+      <div style="padding:1.5rem;">
+        <div class="two-col">
+          <div>
+            <div class="savings-widget" style="margin-bottom:1.5rem;">
+              <div class="savings-label">Total Savings This Year</div>
+              <div class="savings-amount" id="totalSavings">$0</div>
+              <div class="savings-label">vs. self-managing your properties</div>
+
+              <div class="savings-breakdown">
+                <div class="savings-item">
+                  <div class="s-val" id="savingsOurFee">$0</div>
+                  <div class="s-lbl">Our Management Fee</div>
+                </div>
+                <div class="savings-item">
+                  <div class="s-val" id="savingsDIYCost">$0</div>
+                  <div class="s-lbl">Estimated DIY Cost</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel" style="margin:0;">
+              <div class="panel-header"><h3>What We Save You</h3></div>
+              <div class="panel-body">
+                <div id="savingsBreakdownList">
+                  <div class="loading-spinner"><div class="spinner"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel" style="margin:0;">
+            <div class="panel-header">
+              <h3>Monthly Savings History</h3>
+              <p>Savings per month over 6 months</p>
+            </div>
+            <div class="panel-body">
+              <div class="perf-bars" id="savingsPerf">
+                <div class="loading-spinner"><div class="spinner"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ===== NEW SERVICE CALL MODAL ===== -->
+<div class="modal-overlay" id="newCallModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3><i class="fas fa-tools"></i> Create Service Call</h3>
+      <button class="modal-close" onclick="closeModal('newCallModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="alert-msg alert-error" id="newCallError"></div>
+      <div class="form-group">
+        <label>Property</label>
+        <select class="form-control" id="ncProperty">
+          <option value="">Select property...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Issue Title</label>
+        <input type="text" class="form-control" id="ncTitle" placeholder="e.g. Leaking faucet in unit 2">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category</label>
+          <select class="form-control" id="ncCategory">
+            <option value="plumbing">Plumbing</option>
+            <option value="electrical">Electrical</option>
+            <option value="hvac">HVAC / Heating</option>
+            <option value="appliance">Appliance</option>
+            <option value="structural">Structural</option>
+            <option value="cleaning">Cleaning</option>
+            <option value="pest">Pest Control</option>
+            <option value="locksmith">Locksmith</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Priority</label>
+          <select class="form-control" id="ncPriority">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+            <option value="emergency">Emergency</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea class="form-control" id="ncDescription" placeholder="Describe the issue in detail..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('newCallModal')">Cancel</button>
+      <button class="btn btn-blue" onclick="submitServiceCall()">
+        <i class="fas fa-paper-plane"></i> Submit Call
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SERVICE CALL DETAIL MODAL ===== -->
+<div class="modal-overlay" id="callDetailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="callDetailTitle">Service Call Details</h3>
+      <button class="modal-close" onclick="closeModal('callDetailModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="callDetailBody">
+      <div class="loading-spinner"><div class="spinner"></div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('callDetailModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = 'https://leasenexus.onrender.com';
+  let authToken = null;
+  let currentUser = null;
+  let portalData = { properties: [], serviceCalls: [], rentLedger: [], performance: [] };
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  // ===== AUTH =====
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('loginBtn');
+    const err = document.getElementById('loginError');
+    err.style.display = 'none';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch(`${API}/api/portal/landlord/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: document.getElementById('loginEmail').value,
+          password: document.getElementById('loginPassword').value
+        })
+      });
+      const data = await res.json();
+
+      if (!data.success) throw new Error(data.error || 'Login failed');
+
+      authToken = data.token;
+      currentUser = data.user;
+      localStorage.setItem('landlordToken', authToken);
+      localStorage.setItem('landlordUser', JSON.stringify(currentUser));
+      showPortal();
+    } catch (err2) {
+      err.textContent = err2.message;
+      err.style.display = 'block';
+    } finally {
+      btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> <span>Sign In to Portal</span>';
+      btn.disabled = false;
+    }
+  });
+
+  function showPortal() {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('portal').classList.add('active');
+    document.getElementById('sidebarName').textContent = currentUser.name || currentUser.email;
+    document.getElementById('sidebarEmail').textContent = currentUser.email;
+    loadDashboard();
+    populateYearSelector();
+  }
+
+  function logout() {
+    localStorage.removeItem('landlordToken');
+    localStorage.removeItem('landlordUser');
+    authToken = null;
+    currentUser = null;
+    document.getElementById('portal').classList.remove('active');
+    document.getElementById('loginPage').style.display = 'flex';
+  }
+
+  function authHeaders() {
+    return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` };
+  }
+
+  // Check existing session
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedToken = localStorage.getItem('landlordToken');
+    const savedUser = localStorage.getItem('landlordUser');
+    if (savedToken && savedUser) {
+      authToken = savedToken;
+      currentUser = JSON.parse(savedUser);
+      showPortal();
+    }
+  });
+
+  // ===== NAVIGATION =====
+  const pages = { dashboard: 'Dashboard', serviceCalls: 'Service Calls', rentLedger: 'Rent Ledger', performance: 'Performance', savings: 'Cost Savings' };
+  const subtitles = { dashboard: 'Overview of all your properties', serviceCalls: 'Track and manage all maintenance requests', rentLedger: 'Monthly rent payment records', performance: 'Building performance metrics', savings: 'How much we save you vs self-management' };
+
+  function showPage(page) {
+    document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(`page-${page}`).classList.add('active');
+    event.currentTarget.classList.add('active');
+    document.getElementById('pageTitle').textContent = pages[page];
+    document.getElementById('pageSubtitle').textContent = subtitles[page];
+
+    if (page === 'serviceCalls') loadServiceCalls();
+    if (page === 'rentLedger') loadRentLedger();
+    if (page === 'performance') loadPerformance();
+    if (page === 'savings') loadSavings();
+  }
+
+  // ===== DATA LOADING =====
+  async function loadDashboard() {
+    try {
+      const res = await fetch(`${API}/api/portal/landlord/dashboard`, { headers: authHeaders() });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error);
+
+      portalData = { ...portalData, ...data };
+      renderDashboard(data);
+      populatePropertySelectors(data.properties || []);
+    } catch (err) {
+      showNotif('Failed to load dashboard: ' + err.message, 'error');
+    }
+  }
+
+  function renderDashboard(data) {
+    const stats = data.stats || {};
+    const now = new Date();
+
+    document.getElementById('statProperties').textContent = (data.properties || []).length;
+    document.getElementById('statRentCollected').textContent = '$' + fmt(stats.rent_collected || 0);
+    document.getElementById('statOpenCalls').textContent = stats.open_calls || 0;
+    document.getElementById('statSavings').textContent = '$' + fmt(stats.savings || 0);
+    document.getElementById('rentOverviewMonth').textContent = MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+
+    // Recent service calls
+    const calls = (data.service_calls || []).slice(0, 5);
+    const callsEl = document.getElementById('recentCallsList');
+    if (!calls.length) {
+      callsEl.innerHTML = '<div class="empty-state"><i class="fas fa-tools"></i><p>No service calls yet</p></div>';
+    } else {
+      callsEl.innerHTML = `<table class="data-table">
+        <thead><tr><th>Title</th><th>Status</th><th>Priority</th><th>Date</th></tr></thead>
+        <tbody>${calls.map(c => `
+          <tr onclick="viewServiceCall('${c.id}')" style="cursor:pointer;">
+            <td><strong>${escHtml(c.title)}</strong></td>
+            <td>${statusBadge(c.status)}</td>
+            <td>${priorityBadge(c.priority)}</td>
+            <td>${fmtDate(c.created_at)}</td>
+          </tr>
+        `).join('')}</tbody>
+      </table>`;
+    }
+
+    // Rent summary
+    const rentEl = document.getElementById('rentSummaryBody');
+    const ledger = data.rent_ledger || [];
+    if (!ledger.length) {
+      rentEl.innerHTML = '<div class="empty-state"><i class="fas fa-dollar-sign"></i><p>No rent records this month</p></div>';
+    } else {
+      const totalDue = ledger.reduce((s, r) => s + parseFloat(r.amount_due || 0), 0);
+      const totalPaid = ledger.reduce((s, r) => s + parseFloat(r.amount_paid || 0), 0);
+      const rate = totalDue > 0 ? Math.round(totalPaid / totalDue * 100) : 0;
+      rentEl.innerHTML = `
+        <div style="margin-bottom:1rem;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;">
+            <span style="font-size:0.8rem;color:var(--text-muted);">Collection Rate</span>
+            <strong>${rate}%</strong>
+          </div>
+          <div style="background:#e2e8f0;border-radius:100px;height:8px;overflow:hidden;">
+            <div style="height:100%;background:linear-gradient(90deg,var(--success),#34d399);width:${rate}%;border-radius:100px;"></div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.875rem;">
+          <span>Expected: <strong>$${fmt(totalDue)}</strong></span>
+          <span>Collected: <strong style="color:var(--success);">$${fmt(totalPaid)}</strong></span>
+        </div>
+        <div style="margin-top:1rem;">
+          ${ledger.slice(0,4).map(r => `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid #f1f5f9;font-size:0.825rem;">
+              <span>${escHtml(r.tenant_name || 'Tenant')}</span>
+              <span>${statusBadge(r.status)}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // Properties list
+    const propsEl = document.getElementById('propertiesList');
+    const props = data.properties || [];
+    if (!props.length) {
+      propsEl.innerHTML = '<div class="empty-state"><i class="fas fa-building"></i><p>No properties found</p></div>';
+    } else {
+      propsEl.innerHTML = `<table class="data-table">
+        <thead><tr><th>Address</th><th>Type</th><th>Units</th><th>Monthly Rent</th><th>Mgmt Fee</th><th>Status</th></tr></thead>
+        <tbody>${props.map(p => `
+          <tr>
+            <td><strong>${escHtml(p.address)}</strong><br><small style="color:var(--text-muted)">${p.city || ''}, ${p.province || ''}</small></td>
+            <td>${escHtml(p.property_type || '—')}</td>
+            <td>${p.unit_count || 1}</td>
+            <td>$${fmt(p.monthly_rent || 0)}</td>
+            <td>${p.management_fee_pct || 10}%</td>
+            <td><span class="badge badge-${p.status === 'active' ? 'resolved' : 'closed'}">${p.status || 'active'}</span></td>
+          </tr>
+        `).join('')}</tbody>
+      </table>`;
+    }
+  }
+
+  async function loadServiceCalls() {
+    const propFilter = document.getElementById('scPropertyFilter')?.value || 'all';
+    const statusFilter = document.getElementById('scStatusFilter')?.value || 'all';
+    const tbody = document.getElementById('serviceCallsTable');
+    tbody.innerHTML = '<tr><td colspan="7"><div class="loading-spinner"><div class="spinner"></div></div></td></tr>';
+
+    try {
+      let url = `${API}/api/service-calls?`;
+      if (propFilter !== 'all') url += `property_id=${propFilter}&`;
+      if (statusFilter !== 'all') url += `status=${statusFilter}`;
+
+      const res = await fetch(url, { headers: authHeaders() });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error);
+
+      const calls = data.service_calls || [];
+      renderKanban(calls);
+
+      tbody.innerHTML = calls.length ? calls.map(c => `
+        <tr onclick="viewServiceCall('${c.id}')" style="cursor:pointer;">
+          <td><strong>${escHtml(c.title)}</strong></td>
+          <td><i class="fas fa-${catIcon(c.category)}" style="margin-right:0.3rem;color:var(--accent);"></i>${escHtml(c.category || '—')}</td>
+          <td>${priorityBadge(c.priority)}</td>
+          <td>${statusBadge(c.status)}</td>
+          <td>${fmtDate(c.created_at)}</td>
+          <td>${c.estimated_cost ? '$' + fmt(c.estimated_cost) : '—'}</td>
+          <td>
+            <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();viewServiceCall('${c.id}')">
+              <i class="fas fa-eye"></i> View
+            </button>
+          </td>
+        </tr>
+      `).join('') : `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-check-circle"></i><p>No service calls found</p></div></td></tr>`;
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--danger);">${err.message}</td></tr>`;
+    }
+  }
+
+  function renderKanban(calls) {
+    const cols = { open: [], in_progress: [], resolved: [], closed: [] };
+    calls.forEach(c => {
+      const key = c.status === 'in_progress' ? 'in_progress' : (cols[c.status] ? c.status : 'open');
+      if (cols[key]) cols[key].push(c);
+    });
+
+    const render = (key, elId, cntId) => {
+      document.getElementById(cntId).textContent = cols[key].length;
+      document.getElementById(elId).innerHTML = cols[key].length
+        ? cols[key].map(c => `
+          <div class="kanban-card" onclick="viewServiceCall('${c.id}')">
+            <div class="kanban-card-title">${escHtml(c.title)}</div>
+            <div class="kanban-card-meta">
+              <span><i class="fas fa-${catIcon(c.category)}"></i> ${c.category}</span>
+              <span>${priorityBadge(c.priority)}</span>
+            </div>
+            <div style="font-size:0.7rem;color:var(--text-light);margin-top:0.4rem;">${fmtDate(c.created_at)}</div>
+          </div>`)
+        .join('')
+        : '<div style="padding:1rem;text-align:center;font-size:0.8rem;color:var(--text-light);">None</div>';
+    };
+
+    render('open', 'col-open', 'cnt-open');
+    render('in_progress', 'col-progress', 'cnt-progress');
+    render('resolved', 'col-resolved', 'cnt-resolved');
+    render('closed', 'col-closed', 'cnt-closed');
+  }
+
+  async function loadRentLedger() {
+    const year = document.getElementById('ledgerYear')?.value;
+    const month = document.getElementById('ledgerMonth')?.value;
+    const status = document.getElementById('ledgerStatus')?.value;
+    const tbody = document.getElementById('rentLedgerTable');
+    tbody.innerHTML = '<tr><td colspan="8"><div class="loading-spinner"><div class="spinner"></div></div></td></tr>';
+
+    try {
+      let url = `${API}/api/rent-ledger?`;
+      if (year) url += `year=${year}&`;
+      if (month && month !== 'all') url += `month=${month}&`;
+      if (status && status !== 'all') url += `status=${status}`;
+
+      const res = await fetch(url, { headers: authHeaders() });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error);
+
+      const records = data.records || [];
+      const totalDue = records.reduce((s, r) => s + parseFloat(r.amount_due || 0), 0);
+      const totalPaid = records.reduce((s, r) => s + parseFloat(r.amount_paid || 0), 0);
+      const rate = totalDue > 0 ? Math.round(totalPaid / totalDue * 100) : 0;
+
+      document.getElementById('ledgerTotalExpected').textContent = '$' + fmt(totalDue);
+      document.getElementById('ledgerTotalCollected').textContent = '$' + fmt(totalPaid);
+      document.getElementById('ledgerRate').textContent = rate + '%';
+
+      tbody.innerHTML = records.length ? records.map(r => `
+        <tr>
+          <td>${escHtml(r.tenant_name || '—')}</td>
+          <td style="font-size:0.8rem;">${escHtml(r.property_address || '—')}</td>
+          <td>${MONTHS[(r.period_month || 1) - 1]} ${r.period_year}</td>
+          <td><strong>$${fmt(r.amount_due)}</strong></td>
+          <td style="color:var(--success);">$${fmt(r.amount_paid || 0)}</td>
+          <td>${r.payment_date ? fmtDate(r.payment_date) : '—'}</td>
+          <td>${r.payment_method || '—'}</td>
+          <td>${statusBadge(r.status || 'pending')}</td>
+        </tr>
+      `).join('') : `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-dollar-sign"></i><p>No records found</p></div></td></tr>`;
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--danger);">${err.message}</td></tr>`;
+    }
+  }
+
+  async function loadPerformance() {
+    try {
+      const res = await fetch(`${API}/api/portal/landlord/dashboard`, { headers: authHeaders() });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error);
+
+      const perf = data.performance || {};
+      document.getElementById('perfOccupancy').textContent = (perf.occupancy_rate || 100) + '%';
+      document.getElementById('perfResolutionRate').textContent = (perf.resolution_rate || 0) + '%';
+      document.getElementById('perfAvgDays').textContent = perf.avg_resolution_days || '—';
+      document.getElementById('perfCollectionRate').textContent = (perf.collection_rate || 0) + '%';
+
+      // Monthly bars
+      const months = data.monthly_performance || [];
+      const barsEl = document.getElementById('perfBars');
+      if (!months.length) {
+        barsEl.innerHTML = '<div class="empty-state"><i class="fas fa-chart-bar"></i><p>No performance data yet</p></div>';
+      } else {
+        const max = Math.max(...months.map(m => parseFloat(m.rent_expected || 1)));
+        barsEl.innerHTML = months.map(m => {
+          const pct = max > 0 ? Math.round(parseFloat(m.rent_collected || 0) / max * 100) : 0;
+          return `<div class="perf-row">
+            <div class="perf-month">${MONTHS[(m.period_month || 1) - 1]}</div>
+            <div class="perf-bar-track"><div class="perf-bar-fill" style="width:${pct}%"></div></div>
+            <div class="perf-val">$${fmt(m.rent_collected || 0)}</div>
+          </div>`;
+        }).join('');
+      }
+
+      // Service call breakdown
+      const calls = data.service_calls || [];
+      const cats = {};
+      calls.forEach(c => { cats[c.category] = (cats[c.category] || 0) + 1; });
+      const scEl = document.getElementById('scBreakdown');
+      scEl.innerHTML = Object.keys(cats).length ? Object.entries(cats).map(([cat, cnt]) => `
+        <div style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0;border-bottom:1px solid #f1f5f9;">
+          <i class="fas fa-${catIcon(cat)}" style="color:var(--accent);width:16px;text-align:center;"></i>
+          <span style="flex:1;font-size:0.875rem;text-transform:capitalize;">${cat}</span>
+          <span style="font-weight:700;">${cnt}</span>
+        </div>
+      `).join('') : '<div class="empty-state"><i class="fas fa-chart-pie"></i><p>No data</p></div>';
+    } catch (err) {
+      showNotif('Failed to load performance: ' + err.message, 'error');
+    }
+  }
+
+  async function loadSavings() {
+    try {
+      const res = await fetch(`${API}/api/portal/landlord/dashboard`, { headers: authHeaders() });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error);
+
+      const stats = data.stats || {};
+      const ourFee = stats.management_fees || 0;
+      const diyCost = stats.diy_estimated_cost || 0;
+      const savings = Math.max(0, diyCost - ourFee);
+
+      document.getElementById('totalSavings').textContent = '$' + fmt(savings * 12);
+      document.getElementById('savingsOurFee').textContent = '$' + fmt(ourFee * 12);
+      document.getElementById('savingsDIYCost').textContent = '$' + fmt(diyCost * 12);
+
+      const breakdownEl = document.getElementById('savingsBreakdownList');
+      breakdownEl.innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:0.75rem;">
+          ${savingsItem('fas fa-search', 'Tenant Screening & Placement', Math.round(diyCost * 0.2))}
+          ${savingsItem('fas fa-tools', 'Maintenance Coordination', Math.round(diyCost * 0.3))}
+          ${savingsItem('fas fa-clock', 'Admin Time (valued at $50/hr)', Math.round(diyCost * 0.25))}
+          ${savingsItem('fas fa-phone', '24/7 Emergency Response', Math.round(diyCost * 0.15))}
+          ${savingsItem('fas fa-gavel', 'Legal & Compliance Support', Math.round(diyCost * 0.1))}
+        </div>
+      `;
+
+      const months = data.monthly_performance || [];
+      const savPerfEl = document.getElementById('savingsPerf');
+      if (!months.length) {
+        savPerfEl.innerHTML = '<div class="empty-state"><i class="fas fa-piggy-bank"></i><p>No data yet</p></div>';
+      } else {
+        const max = Math.max(...months.map(m => parseFloat(m.savings_vs_diy || 1)));
+        savPerfEl.innerHTML = months.map(m => {
+          const pct = max > 0 ? Math.round(parseFloat(m.savings_vs_diy || 0) / max * 100) : 0;
+          return `<div class="perf-row">
+            <div class="perf-month">${MONTHS[(m.period_month || 1) - 1]}</div>
+            <div class="perf-bar-track"><div class="perf-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,#10b981,#34d399);"></div></div>
+            <div class="perf-val" style="color:#10b981;">$${fmt(m.savings_vs_diy || 0)}</div>
+          </div>`;
+        }).join('');
+      }
+    } catch (err) {
+      showNotif('Failed to load savings: ' + err.message, 'error');
+    }
+  }
+
+  function savingsItem(icon, label, amount) {
+    return `<div style="display:flex;align-items:center;gap:0.75rem;padding:0.85rem;background:#f8faff;border-radius:8px;border:1px solid var(--border);">
+      <div style="width:36px;height:36px;background:#eff6ff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--accent);">
+        <i class="${icon}"></i>
+      </div>
+      <span style="flex:1;font-size:0.875rem;">${label}</span>
+      <strong style="color:var(--success);">~$${fmt(amount)}/yr</strong>
+    </div>`;
+  }
+
+  // ===== SERVICE CALL MODAL =====
+  function openNewServiceCall() {
+    const sel = document.getElementById('ncProperty');
+    sel.innerHTML = '<option value="">Select property...</option>' +
+      (portalData.properties || []).map(p => `<option value="${p.id}">${escHtml(p.address)}</option>`).join('');
+    document.getElementById('newCallModal').classList.add('open');
+  }
+
+  async function submitServiceCall() {
+    const err = document.getElementById('newCallError');
+    err.style.display = 'none';
+    const property_id = document.getElementById('ncProperty').value;
+    const title = document.getElementById('ncTitle').value;
+    const category = document.getElementById('ncCategory').value;
+    const priority = document.getElementById('ncPriority').value;
+    const description = document.getElementById('ncDescription').value;
+
+    if (!property_id || !title || !description) {
+      err.textContent = 'Please fill in all required fields';
+      err.style.display = 'block';
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API}/api/service-calls`, {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify({ property_id, title, description, category, priority })
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error);
+
+      closeModal('newCallModal');
+      showNotif('Service call created successfully!', 'success');
+      loadServiceCalls();
+      loadDashboard();
+    } catch (err2) {
+      err.textContent = err2.message;
+      err.style.display = 'block';
+    }
+  }
+
+  async function viewServiceCall(id) {
+    const modal = document.getElementById('callDetailModal');
+    const body = document.getElementById('callDetailBody');
+    modal.classList.add('open');
+    body.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+
+    try {
+      const res = await fetch(`${API}/api/service-calls/${id}`, { headers: authHeaders() });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error);
+
+      const c = data.service_call;
+      const updates = data.updates || [];
+      document.getElementById('callDetailTitle').textContent = c.title;
+
+      body.innerHTML = `
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.25rem;">
+          ${statusBadge(c.status)} ${priorityBadge(c.priority)}
+          <span class="badge" style="background:#f1f5f9;color:#475569;">${escHtml(c.category)}</span>
+        </div>
+
+        <div style="background:#f8faff;border-radius:8px;padding:1rem;margin-bottom:1.25rem;font-size:0.875rem;line-height:1.7;">
+          ${escHtml(c.description)}
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1.25rem;font-size:0.825rem;">
+          <div><strong>Submitted:</strong> ${fmtDate(c.created_at)}</div>
+          <div><strong>Updated:</strong> ${fmtDate(c.updated_at)}</div>
+          ${c.assigned_to ? `<div><strong>Assigned To:</strong> ${escHtml(c.assigned_to)}</div>` : ''}
+          ${c.estimated_cost ? `<div><strong>Est. Cost:</strong> $${fmt(c.estimated_cost)}</div>` : ''}
+          ${c.actual_cost ? `<div><strong>Actual Cost:</strong> $${fmt(c.actual_cost)}</div>` : ''}
+          ${c.resolved_at ? `<div><strong>Resolved:</strong> ${fmtDate(c.resolved_at)}</div>` : ''}
+        </div>
+
+        ${c.resolution_notes ? `<div style="background:#f0fdf4;border-radius:8px;padding:1rem;margin-bottom:1.25rem;font-size:0.875rem;border-left:3px solid var(--success);"><strong>Resolution Notes:</strong><br>${escHtml(c.resolution_notes)}</div>` : ''}
+
+        <h4 style="font-size:0.875rem;font-weight:700;margin-bottom:1rem;">Progress Timeline</h4>
+        <ul class="timeline">
+          ${updates.map(u => `
+            <li class="timeline-item">
+              <div class="timeline-dot ${u.status}"><i class="fas fa-${statusIcon(u.status)}"></i></div>
+              <div class="timeline-content">
+                <div class="timeline-title">${statusLabel(u.status)}</div>
+                ${u.note ? `<div class="timeline-note">${escHtml(u.note)}</div>` : ''}
+                <div class="timeline-meta">${escHtml(u.updated_by)} · ${fmtDate(u.created_at)}</div>
+              </div>
+            </li>
+          `).join('') || '<li style="font-size:0.8rem;color:var(--text-muted);">No updates yet</li>'}
+        </ul>
+      `;
+    } catch (err) {
+      body.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>${err.message}</p></div>`;
+    }
+  }
+
+  // ===== HELPERS =====
+  function populatePropertySelectors(properties) {
+    portalData.properties = properties;
+    const opts = properties.map(p => `<option value="${p.id}">${escHtml(p.address)}</option>`).join('');
+    const el = document.getElementById('scPropertyFilter');
+    if (el) el.innerHTML = '<option value="all">All Properties</option>' + opts;
+  }
+
+  function populateYearSelector() {
+    const now = new Date();
+    const sel = document.getElementById('ledgerYear');
+    if (!sel) return;
+    let opts = '';
+    for (let y = now.getFullYear(); y >= now.getFullYear() - 3; y--) {
+      opts += `<option value="${y}" ${y === now.getFullYear() ? 'selected' : ''}>${y}</option>`;
+    }
+    sel.innerHTML = opts;
+  }
+
+  function refreshData() { loadDashboard(); showNotif('Data refreshed', 'success'); }
+
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+  function showNotif(msg, type) {
+    const n = document.getElementById('notification');
+    const icon = document.getElementById('notif-icon');
+    document.getElementById('notif-text').textContent = msg;
+    icon.innerHTML = type === 'success' ? '<i class="fas fa-check-circle" style="color:#10b981;"></i>' : '<i class="fas fa-exclamation-circle" style="color:#ef4444;"></i>';
+    n.classList.add('show');
+    setTimeout(() => n.classList.remove('show'), 3500);
+  }
+
+  function fmt(n) {
+    const num = parseFloat(n) || 0;
+    return num >= 1000 ? (num / 1000).toFixed(1) + 'k' : num.toFixed(0);
+  }
+
+  function fmtDate(d) {
+    if (!d) return '—';
+    return new Date(d).toLocaleDateString('en-CA', { year:'numeric', month:'short', day:'numeric' });
+  }
+
+  function escHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function statusBadge(s) {
+    const map = { open:'open', in_progress:'in-progress', assigned:'in-progress', resolved:'resolved', closed:'closed', pending:'pending', paid:'paid', overdue:'overdue', partial:'partial' };
+    const cls = map[s] || 'closed';
+    return `<span class="badge badge-${cls}">${s?.replace('_',' ') || '—'}</span>`;
+  }
+
+  function priorityBadge(p) {
+    return `<span class="badge badge-${p || 'low'}">${p || '—'}</span>`;
+  }
+
+  function catIcon(cat) {
+    const map = { plumbing:'faucet', electrical:'bolt', hvac:'thermometer-half', appliance:'blender', structural:'home', cleaning:'broom', pest:'bug', locksmith:'key', other:'wrench' };
+    return map[cat] || 'wrench';
+  }
+
+  function statusIcon(s) {
+    const map = { open:'exclamation-circle', in_progress:'spinner', assigned:'user-check', resolved:'check-circle', closed:'times-circle' };
+    return map[s] || 'circle';
+  }
+
+  function statusLabel(s) {
+    const map = { open:'Call Opened', in_progress:'Work In Progress', assigned:'Assigned to Technician', resolved:'Issue Resolved', closed:'Call Closed' };
+    return map[s] || s;
+  }
+</script>
+</body>
+</html>

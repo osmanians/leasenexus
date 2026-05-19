@@ -7,7 +7,11 @@ const reviewsRoutes = require('./routes/reviews.js');
 const leadRoutes = require('./routes/lead.js');
 const excelRoutes = require('./routes/excel.js');
 const adminAuthRoutes = require('./routes/admin-auth.js');
-const adminRoutes = require('./routes/admin.js');  // ← ADD THIS
+const adminRoutes = require('./routes/admin.js');
+const portalRoutes = require('./routes/portal.js');
+const serviceCallRoutes = require('./routes/service-calls.js');
+const rentLedgerRoutes = require('./routes/rent-ledger.js');
+const propertiesRoutes = require('./routes/properties.js');
 
 // Initialize Supabase
 const { createClient } = require('@supabase/supabase-js');
@@ -28,6 +32,11 @@ app.use(express.json());
 // Register all routes
 app.use('/api/admin', adminAuthRoutes);
 app.use('/api/admin', adminRoutes);  // ← ADD THIS
+
+app.use('/api/portal', portalRoutes);
+app.use('/api/service-calls', serviceCallRoutes);
+app.use('/api/rent-ledger', rentLedgerRoutes);
+app.use('/api/properties', propertiesRoutes);
 
 app.use('/api/roi', roiRoutes);
 app.use('/api/contact', contactRoutes);
