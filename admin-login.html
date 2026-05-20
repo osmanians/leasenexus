@@ -235,12 +235,6 @@
       display: block;
     }
 
-    .loading {
-      display: none;
-      text-align: center;
-      padding: 1rem;
-    }
-
     .spinner {
       display: inline-block;
       width: 20px;
@@ -299,57 +293,45 @@
       margin-bottom: 0.5rem;
     }
 
-    /* Responsive */
     @media (max-width: 480px) {
       .login-container {
         border-radius: 15px;
       }
-
       .login-header {
         padding: 1.5rem 1rem;
       }
-
       .logo {
         font-size: 2rem;
       }
-
       .login-title {
         font-size: 1.4rem;
       }
-
       .login-subtitle {
         font-size: 0.8rem;
       }
-
       .login-body {
         padding: 1.5rem 1rem;
       }
-
       .form-label {
         font-size: 0.9rem;
       }
-
       .form-input {
         padding: 0.65rem 0.875rem;
-        font-size: 16px; /* Prevents zoom on iOS */
+        font-size: 16px;
       }
-
       .form-row {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.75rem;
       }
-
       .forgot-password {
         width: 100%;
         text-align: right;
       }
-
       .login-button {
         padding: 0.8rem;
         font-size: 0.95rem;
       }
-
       body {
         padding: 0.5rem;
       }
@@ -359,7 +341,6 @@
       .login-container {
         max-width: 100%;
       }
-
       .login-body {
         padding: 1.5rem;
       }
@@ -378,7 +359,7 @@
 
     <div class="login-body">
       <div class="demo-notice">
-        <strong>Demo Credentials:</strong>
+        <strong>Login Credentials:</strong>
         Email: usmansafdar.uos@gmail.com<br>
         Password: TestPassword123!
       </div>
@@ -425,11 +406,6 @@
             <span class="spinner"></span>
           </span>
         </button>
-
-        <div class="loading" id="loading">
-          <span class="spinner"></span>
-          <p style="margin-top: 0.5rem; color: var(--text-light);">Authenticating...</p>
-        </div>
       </form>
 
       <a href="index.html" class="back-link">
@@ -443,6 +419,7 @@
   </div>
 
   <script>
+    // API_BASE - use Render backend URL
     const API_BASE = 'https://leasenexus.onrender.com/api';
 
     const loginForm = document.getElementById('loginForm');
@@ -473,7 +450,6 @@
       const email = emailInput.value.trim();
       const password = passwordInput.value;
 
-      // Validation
       if (!email || !password) {
         showError('Please fill in all fields');
         return;
@@ -484,17 +460,22 @@
         return;
       }
 
-      // Show loading state
       submitBtn.disabled = true;
       buttonText.style.display = 'none';
       loadingSpinner.style.display = 'inline-block';
       clearMessages();
 
       try {
+        // ✅ CORRECT JSON FORMAT - using double quotes
         const response = await fetch(`${API_BASE}/admin/auth/login`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
+          headers: { 
+            'Content-Type': 'application/json' 
+          },
+          body: JSON.stringify({ 
+            email: email, 
+            password: password 
+          })
         });
 
         const data = await response.json();
@@ -503,11 +484,9 @@
           throw new Error(data.error || 'Login failed');
         }
 
-        // Save token
         localStorage.setItem('adminToken', data.token);
         localStorage.setItem('adminUser', JSON.stringify(data.user));
 
-        // Save email if "Remember me" is checked
         if (rememberMe.checked) {
           localStorage.setItem('adminEmail', email);
         } else {
@@ -521,8 +500,8 @@
         }, 1500);
 
       } catch (err) {
-        showError(err.message || 'Login failed. Please try again.');
         console.error('Login error:', err);
+        showError(err.message || 'Login failed. Please try again.');
       } finally {
         submitBtn.disabled = false;
         buttonText.style.display = 'inline';
@@ -533,18 +512,18 @@
     function showError(message) {
       errorMessage.textContent = message;
       errorMessage.classList.add('show');
-      errorMessage.style.display = 'block';
     }
 
     function showSuccess(message) {
       successMessage.textContent = message;
       successMessage.classList.add('show');
-      successMessage.style.display = 'block';
     }
 
     function clearMessages() {
       errorMessage.classList.remove('show');
       successMessage.classList.remove('show');
+      errorMessage.style.display = 'block';
+      successMessage.style.display = 'block';
       errorMessage.style.display = 'none';
       successMessage.style.display = 'none';
     }
