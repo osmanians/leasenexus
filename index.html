@@ -23,6 +23,7 @@
         <li><a href="index.html#commercial">Commercial</a></li>
         <li><a href="about.html">About</a></li>
         <li><a href="contact.html" class="nav-btn">Contact</a></li>
+        <li><a href="admin-login.html" style="background: #0f172a; color: white; padding: 0.85rem 2rem; border-radius: 12px; text-decoration: none; font-weight: 700;">Admin</a></li>
       </ul>
     </div>
   </nav>
@@ -52,7 +53,7 @@
           <li>Portfolio optimization</li>
           <li>Exit strategy planning</li>
         </ul>
-        <a href="#investors" class="btn btn-primary" style="width: 100%; text-align: center;">Learn More</a>
+        <a href="contact.html" class="btn btn-primary" style="width: 100%; text-align: center;">Learn More</a>
       </div>
 
       <div class="service-card">
@@ -65,7 +66,7 @@
           <li>Trusted tenant network</li>
           <li>Transparent reporting</li>
         </ul>
-        <a href="#landlords" class="btn btn-primary" style="width: 100%; text-align: center;">Learn More</a>
+        <a href="landlord-contact.html" class="btn btn-primary" style="width: 100%; text-align: center;">List Your Property</a>
       </div>
 
       <div class="service-card">
@@ -78,7 +79,28 @@
           <li>Franchise support</li>
           <li>Strategic guidance</li>
         </ul>
-        <a href="#commercial" class="btn btn-primary" style="width: 100%; text-align: center;">Learn More</a>
+        <a href="contact.html" class="btn btn-primary" style="width: 100%; text-align: center;">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- For Tenants Section (New) -->
+  <section class="investors-section" id="tenants" style="background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);">
+    <div class="investors-content">
+      <div class="investors-text">
+        <h2>Find Your Perfect Home</h2>
+        <p>Looking for a rental property? Let us help you find the ideal home that matches your needs, budget, and lifestyle.</p>
+        <ul class="investors-features">
+          <li><strong>Wide Selection</strong> — Access to hundreds of rental properties</li>
+          <li><strong>Personalized Matching</strong> — We find properties that fit your criteria</li>
+          <li><strong>Fast Response</strong> — Quick turnaround on your inquiries</li>
+          <li><strong>No Hidden Fees</strong> — Transparent process from start to finish</li>
+          <li><strong>Support Throughout</strong> — Guidance from application to move-in</li>
+        </ul>
+        <a href="tenant-contact.html" class="btn btn-primary">Start Your Search</a>
+      </div>
+      <div class="investors-visual">
+        <canvas id="tenantChart"></canvas>
       </div>
     </div>
   </section>
@@ -120,7 +142,7 @@
           <li><strong>Trusted Tenants</strong> — Pre-screened residents, reduced vacancy periods</li>
           <li><strong>Financial Reporting</strong> — Transparent accounting and performance tracking</li>
         </ul>
-        <a href="contact.html" class="btn btn-primary">Get Started</a>
+        <a href="landlord-contact.html" class="btn btn-primary">Get Started</a>
       </div>
     </div>
   </section>
@@ -262,7 +284,8 @@
           <li><a href="index.html#investors">Investor Advisory</a></li>
           <li><a href="index.html#landlords">Property Management</a></li>
           <li><a href="index.html#commercial">Commercial Services</a></li>
-          <li><a href="services.html">All Services</a></li>
+          <li><a href="landlord-contact.html">List Your Property</a></li>
+          <li><a href="tenant-contact.html">Find a Rental</a></li>
         </ul>
       </div>
 
@@ -273,6 +296,7 @@
           <li><a href="about.html">About</a></li>
           <li><a href="services.html">Services</a></li>
           <li><a href="contact.html">Contact</a></li>
+          <li><a href="admin-login.html" class="admin-btn">Admin</a></li>
         </ul>
       </div>
 
@@ -294,5 +318,38 @@
   </footer>
 
   <script src="charts.js"></script>
+  <script>
+    // Tenant Chart
+    if (document.getElementById('tenantChart')) {
+      const tenantCtx = document.getElementById('tenantChart').getContext('2d');
+      new Chart(tenantCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Available Properties', 'Recently Rented', 'Coming Soon'],
+          datasets: [{
+            data: [125, 48, 32],
+            backgroundColor: ['#0071e3', '#60a5fa', '#e0e7ff'],
+            borderColor: '#ffffff',
+            borderWidth: 3,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                usePointStyle: true,
+                padding: 20,
+                font: { size: 12, weight: 600 },
+                color: '#0f172a'
+              }
+            }
+          }
+        }
+      });
+    }
+  </script>
 </body>
 </html>

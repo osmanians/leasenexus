@@ -110,6 +110,40 @@
       transform: translateY(-2px);
     }
 
+    /* ===== SEGMENT TABS ===== */
+    .segment-tabs {
+      background: white;
+      border-radius: 12px;
+      padding: 0.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 0.5rem;
+      border: 2px solid var(--border);
+    }
+
+    .segment-btn {
+      flex: 1;
+      padding: 1rem;
+      border: none;
+      background: transparent;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      color: var(--text-light);
+    }
+
+    .segment-btn.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
+      color: white;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .segment-btn:hover:not(.active) {
+      background: var(--light);
+    }
+
     /* ===== CONTAINER ===== */
     .container {
       max-width: 1400px;
@@ -359,15 +393,6 @@
       background: #1e40af;
     }
 
-    .action-btn-delete {
-      background: var(--danger);
-      color: white;
-    }
-
-    .action-btn-delete:hover {
-      background: #dc2626;
-    }
-
     /* ===== MODAL ===== */
     .modal {
       display: none;
@@ -589,6 +614,10 @@
         font-size: 0.85rem;
       }
 
+      .segment-tabs {
+        flex-direction: column;
+      }
+
       .modal-content {
         padding: 1.5rem;
       }
@@ -650,7 +679,7 @@
 
       .form-control {
         padding: 0.6rem 0.75rem;
-        font-size: 16px; /* Prevents zoom on iOS */
+        font-size: 16px;
       }
     }
   </style>
@@ -679,7 +708,20 @@
     <!-- Page Header -->
     <div class="page-header">
       <div class="page-title"><i class="fas fa-chart-bar"></i> Dashboard</div>
-      <div class="page-subtitle">Manage all leads and inquiries</div>
+      <div class="page-subtitle">Manage all leads, landlords, and tenant inquiries</div>
+    </div>
+
+    <!-- Segment Tabs -->
+    <div class="segment-tabs">
+      <button class="segment-btn active" onclick="filterByType('all')">
+        <i class="fas fa-users"></i> All Leads
+      </button>
+      <button class="segment-btn" onclick="filterByType('landlord')">
+        <i class="fas fa-building"></i> Landlords
+      </button>
+      <button class="segment-btn" onclick="filterByType('tenant')">
+        <i class="fas fa-home"></i> Tenants
+      </button>
     </div>
 
     <!-- Stats -->
@@ -689,16 +731,16 @@
         <div class="stat-label">Total Leads</div>
       </div>
       <div class="stat-card">
+        <div class="stat-value" id="landlordCount">0</div>
+        <div class="stat-label">Landlords</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="tenantCount">0</div>
+        <div class="stat-label">Tenants</div>
+      </div>
+      <div class="stat-card">
         <div class="stat-value" id="newLeads">0</div>
         <div class="stat-label">New</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="contactedLeads">0</div>
-        <div class="stat-label">Contacted</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="convertedLeads">0</div>
-        <div class="stat-label">Converted</div>
       </div>
     </div>
 
@@ -745,6 +787,7 @@
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Type</th>
+                <th>Property/Area</th>
                 <th>Status</th>
                 <th>Notes</th>
                 <th>Created</th>
@@ -808,12 +851,14 @@
   </div>
 
   <script>
+    // ✅ FIXED: API_BASE works for both local and production
     const API_BASE = window.location.hostname === 'localhost' 
-  ? 'http://localhost:5000/api'
-  : 'https://leasenexus.onrender.com/api'
-    // For local testing: const API_BASE = 'http://localhost:5000/api';
+      ? 'http://localhost:5000/api'
+      : 'https://leasenexus.onrender.com/api';
 
     let allLeads = [];
+    let currentFilteredLeads = [];
+    let currentTypeFilter = 'all';
     let currentEditingLeadId = null;
 
     // Check authentication
@@ -848,7 +893,6 @@
         });
 
         if (response.status === 401) {
-          // Token expired
           localStorage.removeItem('adminToken');
           localStorage.removeItem('adminUser');
           window.location.href = 'admin-login.html';
@@ -868,7 +912,7 @@
           document.getElementById('emptyContainer').style.display = 'block';
         } else {
           document.getElementById('tableContainer').style.display = 'block';
-          displayLeads(allLeads);
+          filterByType(currentTypeFilter);
           updateStats();
         }
       } catch (err) {
@@ -881,51 +925,29 @@
       }
     }
 
-    function displayLeads(leads) {
-      const tbody = document.getElementById('leadsTableBody');
-      tbody.innerHTML = '';
-
-      leads.forEach(lead => {
-        const row = document.createElement('tr');
-        const createdDate = new Date(lead.created_at).toLocaleDateString();
-        
-        row.innerHTML = `
-          <td><strong>${lead.first_name || ''} ${lead.last_name || ''}</strong></td>
-          <td>${lead.email || 'N/A'}</td>
-          <td>${lead.phone || 'N/A'}</td>
-          <td>${lead.type === 'landlord' ? 'Landlord' : 'Tenant'}</td>
-          <td><span class="status-badge status-${lead.status || 'new'}">${(lead.status || 'new').charAt(0).toUpperCase() + (lead.status || 'new').slice(1)}</span></td>
-          <td>${(lead.notes || '').substring(0, 50)}${(lead.notes || '').length > 50 ? '...' : ''}</td>
-          <td>${createdDate}</td>
-          <td class="action-cell">
-            <button class="action-btn action-btn-edit" onclick="editLead(${lead.id}, '${lead.first_name}', '${lead.email}')">
-              <i class="fas fa-edit"></i> Edit
-            </button>
-          </td>
-        `;
-        tbody.appendChild(row);
+    function filterByType(type) {
+      currentTypeFilter = type;
+      
+      // Update active button state
+      document.querySelectorAll('.segment-btn').forEach(btn => {
+        btn.classList.remove('active');
       });
+      event?.target?.classList.add('active');
+      
+      if (type === 'all') {
+        currentFilteredLeads = [...allLeads];
+      } else {
+        currentFilteredLeads = allLeads.filter(lead => lead.type === type);
+      }
+      
+      applySearchAndStatusFilter();
     }
 
-    function updateStats() {
-      const stats = {
-        total: allLeads.length,
-        new: allLeads.filter(l => (l.status || 'new') === 'new').length,
-        contacted: allLeads.filter(l => l.status === 'contacted').length,
-        converted: allLeads.filter(l => l.status === 'converted').length
-      };
-
-      document.getElementById('totalLeads').textContent = stats.total;
-      document.getElementById('newLeads').textContent = stats.new;
-      document.getElementById('contactedLeads').textContent = stats.contacted;
-      document.getElementById('convertedLeads').textContent = stats.converted;
-    }
-
-    function filterTable() {
+    function applySearchAndStatusFilter() {
       const searchTerm = document.getElementById('searchInput').value.toLowerCase();
       const statusFilter = document.getElementById('statusFilter').value;
 
-      let filtered = allLeads.filter(lead => {
+      let filtered = currentFilteredLeads.filter(lead => {
         const name = `${lead.first_name || ''} ${lead.last_name || ''}`.toLowerCase();
         const email = (lead.email || '').toLowerCase();
         const phone = (lead.phone || '').toLowerCase();
@@ -937,6 +959,51 @@
       });
 
       displayLeads(filtered);
+    }
+
+    function displayLeads(leads) {
+      const tbody = document.getElementById('leadsTableBody');
+      tbody.innerHTML = '';
+
+      leads.forEach(lead => {
+        const row = document.createElement('tr');
+        const createdDate = new Date(lead.created_at).toLocaleDateString();
+        
+        // Get property address or preferred area
+        const locationInfo = lead.property_address || lead.preferred_area || 'N/A';
+        
+        row.innerHTML = `
+          <td><strong>${lead.first_name || ''} ${lead.last_name || ''}</strong></td>
+          <td>${lead.email || 'N/A'}</td>
+          <td>${lead.phone || 'N/A'}</td>
+          <td><span style="background: ${lead.type === 'landlord' ? '#dbeafe' : '#dcfce7'}; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">${lead.type === 'landlord' ? '🏢 Landlord' : '🏠 Tenant'}</span></td>
+          <td>${locationInfo}</td>
+          <td><span class="status-badge status-${lead.status || 'new'}">${(lead.status || 'new').charAt(0).toUpperCase() + (lead.status || 'new').slice(1)}</span></td>
+          <td>${(lead.notes || '').substring(0, 50)}${(lead.notes || '').length > 50 ? '...' : ''}</td>
+          <td>${createdDate}</td>
+          <td class="action-cell">
+            <button class="action-btn action-btn-edit" onclick='editLead(${lead.id}, "${lead.first_name.replace(/"/g, '\\"')}", "${lead.email.replace(/"/g, '\\"')}")'>
+              <i class="fas fa-edit"></i> Edit
+            </button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function updateStats() {
+      const landlordCount = allLeads.filter(l => l.type === 'landlord').length;
+      const tenantCount = allLeads.filter(l => l.type === 'tenant').length;
+      const newCount = allLeads.filter(l => (l.status || 'new') === 'new').length;
+
+      document.getElementById('totalLeads').textContent = allLeads.length;
+      document.getElementById('landlordCount').textContent = landlordCount;
+      document.getElementById('tenantCount').textContent = tenantCount;
+      document.getElementById('newLeads').textContent = newCount;
+    }
+
+    function filterTable() {
+      applySearchAndStatusFilter();
     }
 
     function editLead(id, name, email) {
@@ -1018,6 +1085,7 @@
     function refreshData() {
       document.getElementById('loadingContainer').style.display = 'block';
       document.getElementById('tableContainer').style.display = 'none';
+      document.getElementById('emptyContainer').style.display = 'none';
       loadLeads();
     }
 

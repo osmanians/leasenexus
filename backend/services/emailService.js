@@ -1,42 +1,54 @@
 // backend/services/emailService.js
-// SendGrid email service for automated notifications
-// Sends branded HTML emails to clients and management
+const nodemailer = require('nodemailer');
 
-const sgMail = require('@sendgrid/mail');
-const apiKey = process.env.SENDGRID_API_KEY;
+// Create transporter using Gmail SMTP with your existing env vars
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
 
-// Initialize SendGrid
-if (apiKey) {
-  sgMail.setApiKey(apiKey);
-  console.log('✅ SendGrid initialized');
-} else {
-  console.warn('⚠️ SENDGRID_API_KEY not set – email functionality disabled');
-}
+// Verify connection on startup
+transporter.verify((error, success) => {
+  if (error) {
+    console.error('❌ Gmail SMTP connection failed:', error);
+  } else {
+    console.log('✅ Gmail SMTP ready to send emails');
+  }
+});
+
+// Brand Colors for Emails (unchanged)
+const BRAND_COLORS = {
+  primary: '#0071e3',
+  lightBlue: '#60a5fa',
+  dark: '#0f172a',
+  white: '#ffffff'
+};
 
 /**
  * Send email asynchronously in the background
- * Uses setImmediate to prevent blocking the response
  */
 function sendEmailAsync(msg) {
-  if (!apiKey) {
-    console.warn('📧 Email service disabled - no API key');
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.warn('📧 Email service disabled – no Gmail credentials');
     return;
   }
 
   setImmediate(() => {
-    sgMail.send(msg)
-      .then(() => {
-        console.log(`✅ Email sent to: ${msg.to}`);
+    transporter.sendMail(msg)
+      .then(info => {
+        console.log(`✅ Email sent to: ${msg.to} (${info.messageId})`);
       })
       .catch(err => {
-        console.error('❌ SendGrid error:', err.response?.body || err.message);
+        console.error('❌ Nodemailer error:', err.response?.body || err.message);
       });
   });
 }
 
 /**
  * Format table row for email
- * Creates a styled HTML table row
  */
 function formatRow(label, value) {
   if (!value || value === 'null' || value === 'undefined' || value === null) return '';
@@ -45,17 +57,16 @@ function formatRow(label, value) {
     <tr>
       <td style="padding: 10px 12px; background: #f8fafc; font-weight: 600; width: 35%; border-bottom: 1px solid #e2e8f0; color: #0f172a;">
         ${label}
-      </td>
+       </td>
       <td style="padding: 10px 12px; border-bottom: 1px solid #e2e8f0; color: #64748b;">
         ${value}
-      </td>
-    </tr>
+       </td>
+     </tr>
   `;
 }
 
 /**
  * Send auto-reply to client
- * Confirms receipt of their inquiry and provides next steps
  */
 async function sendAutoReply({ name, email, type, location }) {
   try {
@@ -139,7 +150,7 @@ async function sendAutoReply({ name, email, type, location }) {
 
     const msg = {
       to: email,
-      from: 'desinest.ca@gmail.com',
+      from: `"Lease Nexus" <${process.env.EMAIL_USER}>`,
       subject: subject,
       html: html
     };
@@ -152,7 +163,6 @@ async function sendAutoReply({ name, email, type, location }) {
 
 /**
  * Send management notification
- * Alerts management team about new leads with full details
  */
 async function sendManagementNotification({
   name,
@@ -166,9 +176,8 @@ async function sendManagementNotification({
   additionalInfo
 }) {
   try {
-    const managementEmail = process.env.MANAGEMENT_EMAIL || 'shahido@live.com, usmansafdar.uos@gmail.com';
+    const managementEmail = process.env.MANAGEMENT_EMAIL || 'usmansafdar.uos@gmail.com,shahido@live.com';
 
-    // Build dynamic table rows based on lead type
     let rows = '';
     rows += formatRow('Lead Type', leadType);
     rows += formatRow('Name', name);
@@ -176,41 +185,27 @@ async function sendManagementNotification({
     rows += formatRow('Phone', phone);
     rows += formatRow('Location', location);
 
-    // Add property/preference details
     if (leadData) {
       rows += formatRow('House Type', leadData.house_type);
       rows += formatRow('Levels', leadData.levels);
-      
       if (leadData.levels && (leadData.levels === '2' || leadData.levels === '3')) {
         rows += formatRow('Basement Entrance', leadData.basement_entrance || 'N/A');
       }
-      
       rows += formatRow('Bedrooms', leadData.bedrooms);
       rows += formatRow('Bathrooms', leadData.bathrooms);
       rows += formatRow('Kitchen', leadData.kitchen);
       rows += formatRow('Garage', leadData.garage);
-      
       if (leadData.expected_rent) {
         rows += formatRow('Expected Rent', `$${parseFloat(leadData.expected_rent).toFixed(2)}/month`);
       }
-      
       rows += formatRow('Utilities', leadData.utilities);
     }
 
-    // Add additional info if present
     if (additionalInfo) {
-      if (additionalInfo.role) {
-        rows += formatRow('Role', additionalInfo.role);
-      }
-      if (additionalInfo.service) {
-        rows += formatRow('Service Interested', additionalInfo.service);
-      }
-      if (additionalInfo.contactMethod) {
-        rows += formatRow('Preferred Contact', additionalInfo.contactMethod);
-      }
-      if (additionalInfo.bestTime) {
-        rows += formatRow('Best Time to Contact', additionalInfo.bestTime);
-      }
+      if (additionalInfo.role) rows += formatRow('Role', additionalInfo.role);
+      if (additionalInfo.service) rows += formatRow('Service Interested', additionalInfo.service);
+      if (additionalInfo.contactMethod) rows += formatRow('Preferred Contact', additionalInfo.contactMethod);
+      if (additionalInfo.bestTime) rows += formatRow('Best Time to Contact', additionalInfo.bestTime);
     }
 
     const html = `
@@ -288,8 +283,8 @@ async function sendManagementNotification({
 
     const msg = {
       to: managementEmail,
-      from: 'desinest.ca@gmail.com',
-      subject: `New Lead: ${name} (${type === 'landlord' ? '🏢' : '🏠'} ${type})`,
+      from: `"Lease Nexus Alerts" <${process.env.EMAIL_USER}>`,
+      subject: `New Lead: ${name} (${type === 'landlord' ? '🏢 Landlord' : type === 'tenant' ? '🏠 Tenant' : '💬 Contact'})`,
       html: html
     };
 

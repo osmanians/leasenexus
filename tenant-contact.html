@@ -491,7 +491,10 @@
   </div>
 
   <script>
-    const API_BASE = 'https://leasenexus.onrender.com/api';
+    // ✅ FIXED: API_BASE now works for both local and production
+    const API_BASE = window.location.hostname === 'localhost' 
+      ? 'http://localhost:5000/api' 
+      : 'https://leasenexus.onrender.com/api';
 
     // Show/hide basement entrance field
     document.getElementById('levels').addEventListener('change', function() {
