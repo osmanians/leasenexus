@@ -1,19 +1,27 @@
 // backend/services/emailService.js
 const nodemailer = require('nodemailer');
 
-// Create transporter using Gmail SMTP with your existing env vars
+// Create transporter using Gmail SMTP with optimized settings for Render
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true, // true for 465, false for 587
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
-  }
+  },
+  timeout: 60000, // 60 seconds timeout (increased)
+  connectionTimeout: 60000,
+  socketTimeout: 60000,
+  logger: false, // Set to true for debugging
+  debug: false
 });
 
-// Verify connection on startup
+// Verify connection on startup (non-blocking)
 transporter.verify((error, success) => {
   if (error) {
-    console.error('❌ Gmail SMTP connection failed:', error);
+    console.error('❌ Gmail SMTP connection failed:', error.message);
+    console.error('⚠️ Will retry on each email send');
   } else {
     console.log('✅ Gmail SMTP ready to send emails');
   }
@@ -28,6 +36,30 @@ const BRAND_COLORS = {
 };
 
 /**
+ * Send email with retry logic
+ */
+async function sendEmailWithRetry(msg, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const info = await transporter.sendMail(msg);
+      console.log(`✅ Email sent to: ${msg.to} (Attempt ${attempt})`, info.messageId);
+      return true;
+    } catch (err) {
+      console.error(`❌ Attempt ${attempt} failed for ${msg.to}:`, err.message);
+      
+      if (attempt === maxRetries) {
+        console.error(`❌ All ${maxRetries} attempts failed for ${msg.to}`);
+        return false;
+      }
+      
+      // Wait 2 seconds before retry
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+  }
+  return false;
+}
+
+/**
  * Send email asynchronously in the background
  */
 function sendEmailAsync(msg) {
@@ -36,14 +68,8 @@ function sendEmailAsync(msg) {
     return;
   }
 
-  setImmediate(() => {
-    transporter.sendMail(msg)
-      .then(info => {
-        console.log(`✅ Email sent to: ${msg.to} (${info.messageId})`);
-      })
-      .catch(err => {
-        console.error('❌ Nodemailer error:', err.response?.body || err.message);
-      });
+  setImmediate(async () => {
+    await sendEmailWithRetry(msg);
   });
 }
 
@@ -281,14 +307,18 @@ async function sendManagementNotification({
 </html>
     `;
 
-    const msg = {
-      to: managementEmail,
-      from: `"Lease Nexus Alerts" <${process.env.EMAIL_USER}>`,
-      subject: `New Lead: ${name} (${type === 'landlord' ? '🏢 Landlord' : type === 'tenant' ? '🏠 Tenant' : '💬 Contact'})`,
-      html: html
-    };
-
-    sendEmailAsync(msg);
+    // Handle multiple management emails
+    const emails = managementEmail.split(',').map(e => e.trim());
+    
+    for (const mgmtEmail of emails) {
+      const msg = {
+        to: mgmtEmail,
+        from: `"Lease Nexus Alerts" <${process.env.EMAIL_USER}>`,
+        subject: `New Lead: ${name} (${type === 'landlord' ? '🏢 Landlord' : type === 'tenant' ? '🏠 Tenant' : '💬 Contact'})`,
+        html: html
+      };
+      sendEmailAsync(msg);
+    }
   } catch (err) {
     console.error('Management notification error:', err);
   }
