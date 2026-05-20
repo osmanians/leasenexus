@@ -16,8 +16,16 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:8000', 'http://localhost:3000', 'https://leasenexus.com'],
-  credentials: true
+  origin: [
+    'http://localhost:8000', 
+    'http://localhost:3000', 
+    'http://127.0.0.1:5500',
+    'https://leasenexus.com',
+    'https://osmanians.github.io'  // ← ADD THIS LINE
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
