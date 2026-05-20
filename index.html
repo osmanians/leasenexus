@@ -3,1110 +3,296 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lease Nexus - Property Management Made Easy</title>
+  <title>Lease Nexus | Strategic Property Management & Investment Advisory</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    :root {
-      --primary: #0f172a;
-      --secondary: #1e293b;
-      --accent: #3b82f6;
-      --accent-alt: #06b6d4;
-      --success: #10b981;
-      --danger: #ef4444;
-      --light: #f8fafc;
-      --border: #e2e8f0;
-      --text-dark: #0f172a;
-      --text-light: #64748b;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: 'Segoe UI', Trebuchet MS, sans-serif;
-      background: white;
-      color: var(--text-dark);
-      line-height: 1.6;
-    }
-
-    /* ===== NAVBAR ===== */
-    .navbar {
-      background: white;
-      border-bottom: 2px solid var(--border);
-      padding: 1rem;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .nav-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 2rem;
-      flex-wrap: wrap;
-    }
-
-    .nav-brand {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--primary);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .nav-brand i {
-      color: var(--accent);
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2.5rem;
-      align-items: center;
-    }
-
-    .nav-links a {
-      color: var(--text-dark);
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.3s ease;
-      font-size: 0.95rem;
-    }
-
-    .nav-links a:hover {
-      color: var(--accent);
-    }
-
-    .admin-button {
-      padding: 0.7rem 1.5rem;
-      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.9rem;
-    }
-
-    .admin-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 15px rgba(59, 130, 246, 0.3);
-    }
-
-    /* ===== HERO ===== */
-    .hero {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-      color: white;
-      padding: 4rem 2rem;
-      text-align: center;
-      min-height: 500px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .hero-content {
-      max-width: 800px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-
-    .hero h1 {
-      font-size: 3.5rem;
-      font-weight: 800;
-      line-height: 1.2;
-      margin-bottom: 1rem;
-    }
-
-    .hero p {
-      font-size: 1.3rem;
-      opacity: 0.9;
-      margin-bottom: 2rem;
-    }
-
-    .hero-buttons {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      padding: 1rem 2rem;
-      border: none;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
-      color: white;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 25px rgba(59, 130, 246, 0.4);
-    }
-
-    .btn-outline {
-      background: transparent;
-      color: white;
-      border: 2px solid white;
-    }
-
-    .btn-outline:hover {
-      background: white;
-      color: var(--primary);
-    }
-
-    /* ===== SECTIONS ===== */
-    .section {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 3rem 2rem;
-    }
-
-    .section-title {
-      font-size: 2.5rem;
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 1rem;
-      color: var(--primary);
-    }
-
-    .section-subtitle {
-      text-align: center;
-      color: var(--text-light);
-      margin-bottom: 3rem;
-      font-size: 1.1rem;
-    }
-
-    /* ===== FEATURES GRID ===== */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-    }
-
-    .feature-card {
-      background: white;
-      padding: 2rem;
-      border-radius: 15px;
-      border: 2px solid var(--border);
-      text-align: center;
-      transition: all 0.3s ease;
-    }
-
-    .feature-card:hover {
-      border-color: var(--accent);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-      transform: translateY(-5px);
-    }
-
-    .feature-icon {
-      font-size: 3rem;
-      color: var(--accent);
-      margin-bottom: 1rem;
-    }
-
-    .feature-card h3 {
-      font-size: 1.3rem;
-      margin-bottom: 0.5rem;
-      color: var(--primary);
-    }
-
-    .feature-card p {
-      color: var(--text-light);
-      font-size: 0.95rem;
-    }
-
-    /* ===== SERVICES ===== */
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-    }
-
-    .service-card {
-      background: linear-gradient(135deg, white, #f8fafc);
-      padding: 2.5rem;
-      border-radius: 15px;
-      border: 2px solid var(--border);
-      transition: all 0.3s ease;
-    }
-
-    .service-card:hover {
-      border-color: var(--accent);
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-    }
-
-    .service-icon {
-      font-size: 2.5rem;
-      color: var(--accent);
-      margin-bottom: 1rem;
-    }
-
-    .service-card h3 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      color: var(--primary);
-    }
-
-    .service-card p {
-      color: var(--text-light);
-      margin-bottom: 1.5rem;
-      line-height: 1.8;
-    }
-
-    .service-card .btn {
-      width: 100%;
-      justify-content: center;
-    }
-
-    /* ===== ROI CALCULATOR ===== */
-    .calculator-section {
-      background: linear-gradient(135deg, #f8fafc, white);
-    }
-
-    .calculator-container {
-      max-width: 800px;
-      margin: 0 auto;
-      background: white;
-      padding: 3rem;
-      border-radius: 20px;
-      border: 2px solid var(--border);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .form-label {
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: var(--primary);
-      font-size: 0.95rem;
-    }
-
-    .form-input,
-    .form-select {
-      padding: 0.875rem;
-      border: 2px solid var(--border);
-      border-radius: 10px;
-      font-size: 1rem;
-      font-family: inherit;
-      transition: all 0.3s ease;
-      background: white;
-    }
-
-    .form-input:focus,
-    .form-select:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-
-    .btn-calculate {
-      width: 100%;
-      padding: 1rem;
-      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .btn-calculate:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
-    }
-
-    .btn-download {
-      width: 100%;
-      padding: 0.875rem;
-      margin-top: 1rem;
-      background: var(--success);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: none;
-    }
-
-    .btn-download.show {
-      display: block;
-    }
-
-    .results {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-
-    .result-item {
-      background: linear-gradient(135deg, #f8fafc, white);
-      padding: 1.5rem;
-      border-radius: 12px;
-      border-left: 4px solid var(--accent);
-    }
-
-    .result-label {
-      color: var(--text-light);
-      font-size: 0.9rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .result-value {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--primary);
-    }
-
-    /* ===== WORKFLOW ===== */
-    .workflow-section {
-      background: white;
-    }
-
-    .workflow-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-    }
-
-    .workflow-step {
-      background: linear-gradient(135deg, white, #f8fafc);
-      padding: 1.5rem;
-      border-radius: 12px;
-      border: 2px solid var(--border);
-      text-align: center;
-      transition: all 0.3s ease;
-    }
-
-    .workflow-step:hover {
-      border-color: var(--accent);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .workflow-number {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--accent);
-      margin-bottom: 0.5rem;
-    }
-
-    .workflow-title {
-      font-weight: 600;
-      color: var(--primary);
-      font-size: 0.9rem;
-    }
-
-    /* ===== TEAM ===== */
-    .team-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-    }
-
-    .team-card {
-      background: white;
-      padding: 2rem;
-      border-radius: 15px;
-      border: 2px solid var(--border);
-      text-align: center;
-      transition: all 0.3s ease;
-    }
-
-    .team-card:hover {
-      border-color: var(--accent);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    .team-avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      color: white;
-      margin: 0 auto 1rem;
-    }
-
-    .team-card h3 {
-      color: var(--primary);
-      margin-bottom: 0.5rem;
-    }
-
-    .team-role {
-      color: var(--accent);
-      font-weight: 600;
-      font-size: 0.9rem;
-      margin-bottom: 1rem;
-    }
-
-    .team-contact {
-      color: var(--text-light);
-      font-size: 0.85rem;
-      line-height: 1.6;
-    }
-
-    /* ===== FOOTER ===== */
-    .footer {
-      background: var(--primary);
-      color: white;
-      text-align: center;
-      padding: 3rem 2rem;
-      border-top: 2px solid var(--border);
-    }
-
-    .footer-content {
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .footer p {
-      opacity: 0.8;
-      margin-bottom: 0.5rem;
-    }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 768px) {
-      .nav-links {
-        gap: 1rem;
-      }
-
-      .nav-links a {
-        font-size: 0.85rem;
-      }
-
-      .admin-button {
-        padding: 0.6rem 1.2rem;
-        font-size: 0.85rem;
-      }
-
-      .hero {
-        padding: 2rem 1rem;
-        min-height: 400px;
-      }
-
-      .hero h1 {
-        font-size: 2.2rem;
-      }
-
-      .hero p {
-        font-size: 1.1rem;
-      }
-
-      .hero-buttons {
-        flex-direction: column;
-      }
-
-      .hero-buttons .btn {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .section {
-        padding: 2rem 1rem;
-      }
-
-      .section-title {
-        font-size: 2rem;
-      }
-
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .calculator-container {
-        padding: 2rem 1rem;
-      }
-
-      .workflow-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 480px) {
-      .nav-content {
-        gap: 1rem;
-        flex-direction: column;
-      }
-
-      .nav-links {
-        width: 100%;
-        justify-content: space-between;
-        gap: 0.5rem;
-      }
-
-      .nav-links a {
-        font-size: 0.75rem;
-      }
-
-      .admin-button {
-        padding: 0.5rem 1rem;
-        font-size: 0.75rem;
-      }
-
-      .hero {
-        padding: 1.5rem 1rem;
-        min-height: 350px;
-      }
-
-      .hero h1 {
-        font-size: 1.8rem;
-      }
-
-      .hero p {
-        font-size: 1rem;
-      }
-
-      .section {
-        padding: 1.5rem 0.75rem;
-      }
-
-      .section-title {
-        font-size: 1.5rem;
-      }
-
-      .features-grid,
-      .services-grid,
-      .team-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .workflow-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .workflow-step {
-        padding: 1rem;
-      }
-
-      .form-input,
-      .form-select {
-        font-size: 16px;
-      }
-    }
-
-    .loading {
-      display: none;
-      text-align: center;
-      padding: 2rem;
-    }
-
-    .spinner {
-      display: inline-block;
-      width: 30px;
-      height: 30px;
-      border: 3px solid rgba(59, 130, 246, 0.3);
-      border-radius: 50%;
-      border-top-color: var(--accent);
-      animation: spin 0.6s linear infinite;
-      margin-bottom: 1rem;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: white;
-      padding: 1.5rem 2rem;
-      border-radius: 12px;
-      border-left: 4px solid var(--accent);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-      display: none;
-      z-index: 2000;
-      animation: slideIn 0.3s ease;
-    }
-
-    .toast.show {
-      display: block;
-    }
-
-    @keyframes slideIn {
-      from {
-        transform: translateX(400px);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Navbar -->
+
+  <!-- NAVBAR -->
   <nav class="navbar">
-    <div class="nav-content">
-      <a href="index.html" class="nav-brand">
-        <i class="fas fa-building"></i> LEASE NEXUS
+    <div class="navbar-content">
+      <a href="index.html" class="logo">
+        <i class="fas fa-building"></i>
+        Lease Nexus
       </a>
-      <div class="nav-links">
-        <a href="#features">Features</a>
-        <a href="#services">Services</a>
-        <a href="#calculator">Calculator</a>
-        <a href="admin-login.html" class="admin-button">
-          <i class="fas fa-lock"></i> Admin Login
-        </a>
-      </div>
+      <ul class="nav-links">
+        <li><a href="index.html#investors">Investors</a></li>
+        <li><a href="index.html#landlords">Landlords</a></li>
+        <li><a href="index.html#commercial">Commercial</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html" class="nav-btn">Contact</a></li>
+      </ul>
     </div>
   </nav>
 
-  <!-- Hero Section -->
+  <!-- HERO -->
   <section class="hero">
     <div class="hero-content">
-      <h1>Transform Your Property Management</h1>
-      <p>Find better tenants, manage properties efficiently, and grow your real estate business</p>
+      <h1>Strategic Real Estate Solutions That Deliver Results</h1>
+      <p>From market research to lease renewal, we provide comprehensive property management and investment advisory services that transform opportunities into measurable success.</p>
       <div class="hero-buttons">
-        <a href="#calculator" class="btn btn-primary">
-          <i class="fas fa-calculator"></i> Calculate ROI
-        </a>
-        <a href="#services" class="btn btn-outline">
-          <i class="fas fa-info-circle"></i> Learn More
-        </a>
+        <a href="contact.html" class="btn btn-primary">Start Your Journey</a>
+        <a href="#investors" class="btn btn-outline">Explore Solutions</a>
       </div>
     </div>
   </section>
 
-  <!-- Features Section -->
-  <section class="section" id="features">
-    <h2 class="section-title">Why Choose Lease Nexus?</h2>
-    <p class="section-subtitle">Built by property managers, for property managers</p>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fas fa-users"></i></div>
-        <h3>Better Tenants</h3>
-        <p>Find qualified tenants with comprehensive screening and matching</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fas fa-building"></i></div>
-        <h3>Smart Properties</h3>
-        <p>Manage multiple properties with centralized dashboard and tools</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
-        <h3>Real ROI</h3>
-        <p>Maximize returns with data-driven insights and analytics</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fas fa-headset"></i></div>
-        <h3>24/7 Support</h3>
-        <p>Professional support team always ready to help you succeed</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fas fa-lock"></i></div>
-        <h3>Secure & Reliable</h3>
-        <p>Enterprise-grade security for all your property data</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
-        <h3>Mobile Ready</h3>
-        <p>Manage properties on the go with responsive design</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Services Section -->
-  <section class="section" id="services">
-    <h2 class="section-title">Our Services</h2>
-    <p class="section-subtitle">Complete solutions for landlords and tenants</p>
+  <!-- OVERVIEW CARDS -->
+  <section class="section">
     <div class="services-grid">
       <div class="service-card">
-        <div class="service-icon"><i class="fas fa-key"></i></div>
-        <h3>Landlord Services</h3>
-        <p>Property management tools designed specifically for landlords. Manage tenants, collect rent, handle maintenance, and maximize your property income.</p>
-        <a href="landlord-contact.html" class="btn btn-primary">
-          <i class="fas fa-arrow-right"></i> Learn More
-        </a>
+        <div class="service-card-icon"><i class="fas fa-chart-line"></i></div>
+        <h3>For Investors</h3>
+        <p>Data-driven market research and strategic acquisition guidance to build high-performing real estate portfolios.</p>
+        <ul class="service-features">
+          <li>Comprehensive market analysis</li>
+          <li>ROI projections & modeling</li>
+          <li>Portfolio optimization</li>
+          <li>Exit strategy planning</li>
+        </ul>
+        <a href="#investors" class="btn btn-primary" style="width: 100%; text-align: center;">Learn More</a>
       </div>
+
       <div class="service-card">
-        <div class="service-icon"><i class="fas fa-home"></i></div>
-        <h3>Tenant Services</h3>
-        <p>Tools and resources to help you find the perfect property. Search, apply, and connect with property managers seamlessly.</p>
-        <a href="tenant-contact.html" class="btn btn-primary">
-          <i class="fas fa-arrow-right"></i> Learn More
-        </a>
+        <div class="service-card-icon"><i class="fas fa-home"></i></div>
+        <h3>For Landlords</h3>
+        <p>Complete property management from tenant placement to maintenance coordination—maximizing returns with minimal hassle.</p>
+        <ul class="service-features">
+          <li>Full property management</li>
+          <li>Vacant to move-in ready</li>
+          <li>Trusted tenant network</li>
+          <li>Transparent reporting</li>
+        </ul>
+        <a href="#landlords" class="btn btn-primary" style="width: 100%; text-align: center;">Learn More</a>
+      </div>
+
+      <div class="service-card">
+        <div class="service-card-icon"><i class="fas fa-building"></i></div>
+        <h3>For Commercial</h3>
+        <p>Enterprise-grade support for corporate operations, franchise expansion, and multi-location portfolio management.</p>
+        <ul class="service-features">
+          <li>Site selection & sourcing</li>
+          <li>Lease negotiation</li>
+          <li>Franchise support</li>
+          <li>Strategic guidance</li>
+        </ul>
+        <a href="#commercial" class="btn btn-primary" style="width: 100%; text-align: center;">Learn More</a>
       </div>
     </div>
   </section>
 
-  <!-- Workflow Section -->
-  <section class="section workflow-section">
-    <h2 class="section-title">Our Simple Workflow</h2>
-    <p class="section-subtitle">From inquiry to successful partnership</p>
-    <div class="workflow-grid">
-      <div class="workflow-step">
-        <div class="workflow-number">1</div>
-        <div class="workflow-title">Property Assessment</div>
+  <!-- INVESTORS DETAILED -->
+  <section class="investors-section" id="investors">
+    <div class="investors-content">
+      <div class="investors-text">
+        <h2>Maximize Your Investment Returns</h2>
+        <p>We provide institutional-grade research, rigorous due diligence, and strategic guidance to identify acquisitions that align with your investment thesis and deliver measurable returns.</p>
+        <ul class="investors-features">
+          <li><strong>Market Research</strong> — Deep analysis of trends, demographics, and investment corridors</li>
+          <li><strong>Due Diligence</strong> — Comprehensive property evaluation and financial modeling</li>
+          <li><strong>Portfolio Management</strong> — End-to-end oversight and performance optimization</li>
+          <li><strong>ROI Strategy</strong> — Techniques to maximize returns on every investment</li>
+          <li><strong>Exit Planning</strong> — Strategic guidance for value realization</li>
+        </ul>
+        <a href="contact.html" class="btn btn-primary">Schedule Consultation</a>
       </div>
-      <div class="workflow-step">
-        <div class="workflow-number">2</div>
-        <div class="workflow-title">Staging & Photos</div>
-      </div>
-      <div class="workflow-step">
-        <div class="workflow-number">3</div>
-        <div class="workflow-title">Lead Generation</div>
-      </div>
-      <div class="workflow-step">
-        <div class="workflow-number">4</div>
-        <div class="workflow-title">Data Management</div>
-      </div>
-      <div class="workflow-step">
-        <div class="workflow-number">5</div>
-        <div class="workflow-title">Move-In Support</div>
-      </div>
-      <div class="workflow-step">
-        <div class="workflow-number">6</div>
-        <div class="workflow-title">Onboarding</div>
-      </div>
-      <div class="workflow-step">
-        <div class="workflow-number">7</div>
-        <div class="workflow-title">Management</div>
-      </div>
-      <div class="workflow-step">
-        <div class="workflow-number">8</div>
-        <div class="workflow-title">Service Requests</div>
-      </div>
-      <div class="workflow-step">
-        <div class="workflow-number">9</div>
-        <div class="workflow-title">Reporting</div>
-      </div>
-      <div class="workflow-step">
-        <div class="workflow-number">10</div>
-        <div class="workflow-title">Inspections</div>
-      </div>
-      <div class="workflow-step">
-        <div class="workflow-number">11</div>
-        <div class="workflow-title">Happy Tenants</div>
-      </div>
-      <div class="workflow-step">
-        <div class="workflow-number">12</div>
-        <div class="workflow-title">Stronger Properties</div>
+      <div class="investors-visual">
+        <canvas id="investorChart"></canvas>
       </div>
     </div>
   </section>
 
-  <!-- ROI Calculator Section -->
-  <section class="section calculator-section" id="calculator">
-    <h2 class="section-title">Calculate Your ROI</h2>
-    <p class="section-subtitle">Estimate your property's rental income potential</p>
-    
-    <div class="calculator-container">
-      <form id="roiForm">
-        <div class="form-grid">
-          <div class="form-group">
-            <label class="form-label">Full Name</label>
-            <input type="text" class="form-input" id="fullName" placeholder="Your name" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            <input type="email" class="form-input" id="email" placeholder="your@email.com" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Phone</label>
-            <input type="tel" class="form-input" id="phone" placeholder="(123) 456-7890" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Property Address</label>
-            <input type="text" class="form-input" id="address" placeholder="Street address" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Postal Code</label>
-            <input type="text" class="form-input" id="postal" placeholder="Postal code" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Property Type</label>
-            <select class="form-select" id="propertyType" required>
-              <option value="">Select type</option>
-              <option value="apartment">Apartment</option>
-              <option value="house">House</option>
-              <option value="townhouse">Townhouse</option>
-              <option value="condo">Condo</option>
-              <option value="commercial">Commercial</option>
-              <option value="multi-unit">Multi-Unit</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Bedrooms</label>
-            <select class="form-select" id="bedrooms" required>
-              <option value="">Select</option>
-              <option value="1">1 Bedroom</option>
-              <option value="2">2 Bedrooms</option>
-              <option value="3">3 Bedrooms</option>
-              <option value="4">4 Bedrooms</option>
-              <option value="5">5 Bedrooms</option>
-              <option value="6">6+ Bedrooms</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Bathrooms</label>
-            <select class="form-select" id="bathrooms" required>
-              <option value="">Select</option>
-              <option value="1">1 Bathroom</option>
-              <option value="1.5">1.5 Bathrooms</option>
-              <option value="2">2 Bathrooms</option>
-              <option value="2.5">2.5 Bathrooms</option>
-              <option value="3">3+ Bathrooms</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Square Footage</label>
-            <input type="number" class="form-input" id="sqft" placeholder="e.g., 2500" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Parking Spaces</label>
-            <select class="form-select" id="parking" required>
-              <option value="">Select</option>
-              <option value="0">No Parking</option>
-              <option value="1">1 Space</option>
-              <option value="2">2 Spaces</option>
-              <option value="3">3 Spaces</option>
-              <option value="4">4+ Spaces</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Additional Notes</label>
-            <input type="text" class="form-input" id="notes" placeholder="Any additional details">
-          </div>
-        </div>
+  <!-- LANDLORDS DETAILED -->
+  <section class="landlords-section" id="landlords">
+    <div class="landlords-content">
+      <div class="landlords-visual">
+        <canvas id="landlordChart"></canvas>
+      </div>
+      <div class="landlords-text">
+        <h2>Hassle-Free Property Management</h2>
+        <p>From tenant screening to maintenance coordination, we handle every aspect of professional property management so you can focus on growth. Maximize property value, minimize vacancies, ensure tenant satisfaction.</p>
+        <ul class="landlords-features">
+          <li><strong>Complete Management</strong> — Screening, placement, lease administration, and support</li>
+          <li><strong>Transformation Services</strong> — Vacant to move-in ready in weeks</li>
+          <li><strong>Maintenance Coordination</strong> — Proactive care that preserves asset value</li>
+          <li><strong>Trusted Tenants</strong> — Pre-screened residents, reduced vacancy periods</li>
+          <li><strong>Financial Reporting</strong> — Transparent accounting and performance tracking</li>
+        </ul>
+        <a href="contact.html" class="btn btn-primary">Get Started</a>
+      </div>
+    </div>
+  </section>
 
-        <button type="submit" class="btn-calculate">
-          <i class="fas fa-calculator"></i> Calculate Estimate
-        </button>
-        <button type="button" class="btn-download" id="downloadBtn">
-          <i class="fas fa-download"></i> Download Report
-        </button>
-      </form>
+  <!-- COMMERCIAL DETAILED -->
+  <section class="commercial-section" id="commercial">
+    <div class="commercial-content">
+      <div class="commercial-text">
+        <h2>Enterprise-Scale Property Solutions</h2>
+        <p>Whether expanding franchises, scaling operations, or managing multi-location portfolios, we provide strategic support that aligns your real estate with business objectives and accelerates growth.</p>
+        <ul class="commercial-features">
+          <li><strong>Site Selection</strong> — Identifying optimal locations for profitability</li>
+          <li><strong>Lease Negotiation</strong> — Securing favorable terms that protect margins</li>
+          <li><strong>Franchise Support</strong> — Landlord sourcing through lease renewal</li>
+          <li><strong>Property Fixturing</strong> — Seamless coordination to operational readiness</li>
+          <li><strong>Multi-Location Management</strong> — Unified oversight across portfolio</li>
+        </ul>
+        <a href="contact.html" class="btn btn-primary">Discuss Your Needs</a>
+      </div>
+      <div class="commercial-visual">
+        <canvas id="commercialChart"></canvas>
+      </div>
+    </div>
+  </section>
 
-      <div class="results" id="results" style="display: none;">
-        <div class="result-item">
-          <div class="result-label">Average Monthly Rent</div>
-          <div class="result-value" id="avgRent">$0</div>
+  <!-- WHY US -->
+  <section class="whyus-section">
+    <div class="whyus-content">
+      <h2>Why Lease Nexus</h2>
+      <p style="font-size: 1.25rem; margin-top: 1rem; opacity: 0.95;">Industry expertise meets strategic excellence</p>
+      <div class="whyus-grid">
+        <div class="whyus-card">
+          <i class="fas fa-brain whyus-icon"></i>
+          <h3>Strategic Intelligence</h3>
+          <p>Data-driven insights and market expertise position your investments for sustainable, long-term growth.</p>
         </div>
-        <div class="result-item">
-          <div class="result-label">Minimum Estimate</div>
-          <div class="result-value" id="minRent">$0</div>
+        <div class="whyus-card">
+          <i class="fas fa-cog whyus-icon"></i>
+          <h3>Operational Excellence</h3>
+          <p>Systematic processes and vendor expertise ensure consistent performance across all portfolios.</p>
         </div>
-        <div class="result-item">
-          <div class="result-label">Maximum Estimate</div>
-          <div class="result-value" id="maxRent">$0</div>
+        <div class="whyus-card">
+          <i class="fas fa-shield-alt whyus-icon"></i>
+          <h3>Legal Protection</h3>
+          <p>Expert paralegals and legal advisors ensure all operations comply with regulations and protect your interests.</p>
         </div>
-        <div class="result-item">
-          <div class="result-label">Market Area</div>
-          <div class="result-value" id="marketArea">-</div>
+        <div class="whyus-card">
+          <i class="fas fa-chart-bar whyus-icon"></i>
+          <h3>Transparent Reporting</h3>
+          <p>Detailed analytics and performance metrics keep you informed and empowered to make strategic decisions.</p>
+        </div>
+        <div class="whyus-card">
+          <i class="fas fa-handshake whyus-icon"></i>
+          <h3>Partnership Approach</h3>
+          <p>We view clients as partners, investing time to understand your goals and deliver tailored solutions.</p>
+        </div>
+        <div class="whyus-card">
+          <i class="fas fa-phone whyus-icon"></i>
+          <h3>Always Available</h3>
+          <p>Dedicated support for emergencies and strategic questions—24/7 commitment to your success.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Team Section -->
-  <section class="section">
-    <h2 class="section-title">Our Team</h2>
-    <p class="section-subtitle">Experienced professionals dedicated to your success</p>
+  <!-- TEAM -->
+  <section class="team-section">
+    <div style="max-width: 1600px; margin: 0 auto;">
+      <h2 class="section-title">Meet the Team</h2>
+      <p class="section-subtitle">Industry veterans and specialists dedicated to your success</p>
+    </div>
     <div class="team-grid">
       <div class="team-card">
-        <div class="team-avatar"><i class="fas fa-user-tie"></i></div>
-        <h3>Omar Shahid</h3>
-        <div class="team-role">Licensed Real Estate Agent</div>
-        <div class="team-contact">
-          <p><i class="fas fa-phone"></i> (519) 562-2983</p>
-          <p><i class="fas fa-envelope"></i> shahido@live.com</p>
+        <div class="team-header">OS</div>
+        <div class="team-body">
+          <div class="team-name">Omar Shahid</div>
+          <div class="team-role">Licensed Real Estate Agent & Senior Advisor</div>
+          <div class="team-contact">
+            <strong>(519) 562-2983</strong><br>
+            <a href="mailto:shahido@live.com">shahido@live.com</a>
+          </div>
         </div>
       </div>
+
       <div class="team-card">
-        <div class="team-avatar"><i class="fas fa-user-tie"></i></div>
-        <h3>Usman Safdar</h3>
-        <div class="team-role">Portfolio Manager</div>
-        <div class="team-contact">
-          <p><i class="fas fa-phone"></i> (226) 975-5741</p>
-          <p><i class="fas fa-envelope"></i> usmansafdar.uos@gmail.com</p>
+        <div class="team-header">US</div>
+        <div class="team-body">
+          <div class="team-name">Usman Safdar</div>
+          <div class="team-role">Portfolio Manager & Investment Advisor</div>
+          <div class="team-contact">
+            <strong>(226) 975-5741</strong><br>
+            <a href="mailto:usmansafdar.uos@gmail.com">usmansafdar.uos@gmail.com</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="team-card">
+        <div class="team-header">LN</div>
+        <div class="team-body">
+          <div class="team-name">Expert Support Team</div>
+          <div class="team-role">Realtors, Paralegals & Finance Specialists</div>
+          <div class="team-contact">
+            <strong>1976 McKay Ave, Windsor, ON</strong><br>
+            Mon-Fri, 9AM - 6PM
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-content">
+      <h2>Ready to Elevate Your Real Estate Strategy?</h2>
+      <p>Whether you're positioning your first acquisition, optimizing an existing portfolio, or scaling enterprise operations—we're ready to help you achieve your goals.</p>
+      <div class="hero-buttons">
+        <a href="contact.html" class="btn btn-primary">Get in Touch</a>
+        <a href="tel:+15195622983" class="btn btn-outline">Call (519) 562-2983</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
   <footer class="footer">
     <div class="footer-content">
-      <p><strong>LEASE NEXUS</strong></p>
-      <p>1976 McKay Ave, Windsor, ON</p>
-      <p>&copy; 2025 Lease Nexus. All rights reserved.</p>
+      <div class="footer-section">
+        <h3>Lease Nexus</h3>
+        <p style="line-height: 1.8; color: rgba(255, 255, 255, 0.8);">
+          <strong>1976 McKay Ave</strong><br>
+          Windsor, ON<br><br>
+          <strong>Monday - Friday</strong><br>
+          9:00 AM - 6:00 PM
+        </p>
+      </div>
+
+      <div class="footer-section">
+        <h3>Solutions</h3>
+        <ul>
+          <li><a href="index.html#investors">Investor Advisory</a></li>
+          <li><a href="index.html#landlords">Property Management</a></li>
+          <li><a href="index.html#commercial">Commercial Services</a></li>
+          <li><a href="services.html">All Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h3>Navigate</h3>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h3>Contact</h3>
+        <ul>
+          <li><a href="tel:+15195622983">(519) 562-2983</a></li>
+          <li><a href="tel:+12269755741">(226) 975-5741</a></li>
+          <li><a href="mailto:shahido@live.com">shahido@live.com</a></li>
+          <li><a href="mailto:usmansafdar.uos@gmail.com">usmansafdar.uos@gmail.com</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 Lease Nexus. All rights reserved.</p>
+      <p>Strategic Property Management & Investment Advisory Services</p>
     </div>
   </footer>
 
-  <!-- Toast Notification -->
-  <div class="toast" id="toast"></div>
-
-  <script>
-    const API_BASE = 'https://leasenexus.onrender.com/api';
-    // For local testing: const API_BASE = 'http://localhost:5000/api';
-
-    let estimateData = null;
-
-    // ROI Calculator
-    document.getElementById('roiForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const fullName = document.getElementById('fullName').value;
-      const email = document.getElementById('email').value;
-      const phone = document.getElementById('phone').value;
-      const address = document.getElementById('address').value;
-      const postal = document.getElementById('postal').value;
-      const propertyType = document.getElementById('propertyType').value;
-      const bedrooms = document.getElementById('bedrooms').value;
-      const bathrooms = document.getElementById('bathrooms').value;
-      const sqft = document.getElementById('sqft').value;
-      const parking = document.getElementById('parking').value;
-      const notes = document.getElementById('notes').value;
-
-      try {
-        const response = await fetch(`${API_BASE}/roi/calculate`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: fullName,
-            email: email,
-            phone: phone,
-            address: address,
-            postal: postal,
-            propertyType: propertyType,
-            bedrooms: bedrooms,
-            bathrooms: bathrooms,
-            sqft: sqft,
-            parking: parking,
-            notes: notes
-          })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          estimateData = {
-            name: fullName,
-            email: email,
-            phone: phone,
-            address: address,
-            postal: postal,
-            propertyType: propertyType,
-            bedrooms: bedrooms,
-            bathrooms: bathrooms,
-            sqft: sqft,
-            parking: parking,
-            notes: notes,
-            avgRent: data.avgRent,
-            minRent: data.minRent,
-            maxRent: data.maxRent,
-            avgPricePerSqft: data.pricePerSqft,
-            marketArea: data.marketArea,
-            province: data.province
-          };
-
-          document.getElementById('avgRent').textContent = `$${Number(data.avgRent).toLocaleString()}`;
-          document.getElementById('minRent').textContent = `$${Number(data.minRent).toLocaleString()}`;
-          document.getElementById('maxRent').textContent = `$${Number(data.maxRent).toLocaleString()}`;
-          document.getElementById('marketArea').textContent = `${data.marketArea}, ${data.province}`;
-          document.getElementById('results').style.display = 'grid';
-          document.getElementById('downloadBtn').classList.add('show');
-
-          showToast('✅ Estimate calculated successfully!');
-        } else {
-          showToast('❌ ' + (data.error || 'Calculation failed'));
-        }
-      } catch (err) {
-        console.error('Error:', err);
-        showToast('❌ Error calculating estimate');
-      }
-    });
-
-    // Download Excel Report
-    document.getElementById('downloadBtn').addEventListener('click', async () => {
-      if (!estimateData) return;
-
-      try {
-        const response = await fetch(`${API_BASE}/excel/generate`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(estimateData)
-        });
-
-        if (!response.ok) throw new Error('Download failed');
-
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `LeaseNexus_Valuation_${estimateData.name.replace(/\s+/g, '_')}.xlsx`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-
-        showToast('✅ Report downloaded successfully!');
-      } catch (err) {
-        console.error('Download error:', err);
-        showToast('❌ Error downloading report');
-      }
-    });
-
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.classList.add('show');
-
-      setTimeout(() => {
-        toast.classList.remove('show');
-      }, 3000);
-    }
-  </script>
+  <script src="charts.js"></script>
 </body>
 </html>

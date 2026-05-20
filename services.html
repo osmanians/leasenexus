@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services | Lease Nexus | Property Management & Investment Advisory</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .services-hero { background: linear-gradient(135deg, #0071e3 0%, #60a5fa 100%); color: white; padding: 8rem 2rem; margin-top: 80px; text-align: center; }
+    .services-hero h1 { font-size: 3.5rem; font-weight: 900; margin-bottom: 1rem; letter-spacing: -1px; }
+    .services-hero p { font-size: 1.3rem; opacity: 0.95; max-width: 800px; margin: 0 auto; }
+    .service-section { padding: 6rem 2rem; border-bottom: 1px solid #e2e8f0; }
+    .service-section:last-child { border-bottom: none; }
+    .service-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .service-container.reversed { direction: rtl; }
+    .service-container.reversed > * { direction: ltr; }
+    .service-detail h2 { font-size: 2.5rem; font-weight: 900; margin-bottom: 1.5rem; color: #0f172a; }
+    .service-detail p { font-size: 1.1rem; color: #64748b; line-height: 1.8; margin-bottom: 2rem; }
+    .service-features { list-style: none; margin-bottom: 2rem; }
+    .service-features li { padding: 1rem 0; padding-left: 3rem; position: relative; font-size: 1.05rem; color: #333; border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
+    .service-features li:last-child { border-bottom: none; }
+    .service-features li::before { content: '✓'; position: absolute; left: 0; color: #0071e3; font-weight: 900; font-size: 1.5rem; }
+    .service-image { background: white; border-radius: 20px; padding: 2rem; box-shadow: 0 20px 60px rgba(0, 113, 227, 0.12); border: 1px solid rgba(0, 0, 0, 0.08); min-height: 400px; display: flex; align-items: center; justify-content: center; font-size: 4rem; color: #0071e3; }
+    .pricing-grid { max-width: 1200px; margin: 4rem auto 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 3rem; }
+    .pricing-card { background: white; border: 2px solid #e2e8f0; border-radius: 16px; padding: 3rem; transition: all 0.3s ease; text-align: center; }
+    .pricing-card:hover { border-color: #0071e3; box-shadow: 0 20px 50px rgba(0, 113, 227, 0.15); transform: translateY(-10px); }
+    .pricing-card h3 { font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; color: #0f172a; }
+    .pricing-card p { color: #64748b; margin-bottom: 2rem; line-height: 1.6; }
+    .pricing-icon { font-size: 3rem; color: #0071e3; margin-bottom: 1.5rem; }
+    @media (max-width: 768px) { .services-hero h1 { font-size: 2.2rem; } .service-container { grid-template-columns: 1fr; gap: 2rem; } .service-detail h2 { font-size: 1.8rem; } .pricing-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="index.html" class="logo"><i class="fas fa-building"></i> Lease Nexus</a>
+      <ul class="nav-links">
+        <li><a href="index.html#investors">Investors</a></li>
+        <li><a href="index.html#landlords">Landlords</a></li>
+        <li><a href="index.html#commercial">Commercial</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html" class="nav-btn">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="services-hero">
+    <h1>Our Services</h1>
+    <p>Comprehensive real estate solutions tailored to your specific needs and goals</p>
+  </section>
+
+  <section class="service-section" style="background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);">
+    <div class="service-container">
+      <div class="service-detail">
+        <h2>Investor Advisory</h2>
+        <p>We provide institutional-grade market intelligence, rigorous due diligence, and strategic guidance to help investors identify, evaluate, and optimize real estate acquisitions.</p>
+        <ul class="service-features">
+          <li>Comprehensive market analysis and trend identification</li>
+          <li>Property valuation and financial modeling</li>
+          <li>Investment risk assessment and mitigation strategies</li>
+          <li>Portfolio optimization and rebalancing</li>
+          <li>Exit strategy planning and value realization</li>
+          <li>Ongoing performance monitoring and reporting</li>
+        </ul>
+        <a href="contact.html" class="btn btn-primary">Schedule Consultation</a>
+      </div>
+      <div class="service-image">
+        <i class="fas fa-chart-line"></i>
+      </div>
+    </div>
+  </section>
+
+  <section class="service-section">
+    <div class="service-container reversed">
+      <div class="service-detail">
+        <h2>Property Management</h2>
+        <p>From tenant screening to maintenance coordination, we handle every aspect of professional property management so you can focus on growth while we maximize your returns.</p>
+        <ul class="service-features">
+          <li>Tenant screening, placement, and lease administration</li>
+          <li>Vacant property transformation services</li>
+          <li>Maintenance coordination and vendor management</li>
+          <li>Rent collection and financial accounting</li>
+          <li>Legal compliance and tenant relations</li>
+          <li>Quarterly performance reports and insights</li>
+        </ul>
+        <a href="contact.html" class="btn btn-primary">Get Started</a>
+      </div>
+      <div class="service-image" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white;">
+        <i class="fas fa-home"></i>
+      </div>
+    </div>
+  </section>
+
+  <section class="service-section" style="background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);">
+    <div class="service-container">
+      <div class="service-detail">
+        <h2>Commercial Solutions</h2>
+        <p>Enterprise-grade support for corporate operations, franchise expansion, and multi-location portfolio management aligned with your business objectives.</p>
+        <ul class="service-features">
+          <li>Site selection and market feasibility analysis</li>
+          <li>Lease negotiation and contract management</li>
+          <li>Landlord sourcing and relationship management</li>
+          <li>Property fixturing and buildout coordination</li>
+          <li>Multi-location portfolio consolidation</li>
+          <li>Strategic expansion planning and execution</li>
+        </ul>
+        <a href="contact.html" class="btn btn-primary">Discuss Your Needs</a>
+      </div>
+      <div class="service-image" style="color: #f59e0b;">
+        <i class="fas fa-building"></i>
+      </div>
+    </div>
+  </section>
+
+  <section class="service-section">
+    <div class="service-container reversed">
+      <div class="service-detail">
+        <h2>Additional Support Services</h2>
+        <p>Beyond our core offerings, we provide specialized support services to ensure your complete satisfaction and success in the real estate market.</p>
+        <ul class="service-features">
+          <li>Legal compliance and regulatory guidance</li>
+          <li>Financial analysis and ROI projections</li>
+          <li>Custom reporting and performance dashboards</li>
+          <li>Training and advisory for internal teams</li>
+          <li>Technology integration and automation</li>
+          <li>24/7 emergency support and consultation</li>
+        </ul>
+        <a href="contact.html" class="btn btn-primary">Learn More</a>
+      </div>
+      <div class="service-image" style="color: #10b981;">
+        <i class="fas fa-headset"></i>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding: 10rem 2rem;">
+    <div style="text-align: center; max-width: 1200px; margin: 0 auto;">
+      <h2 class="section-title">Service Pricing</h2>
+      <p class="section-subtitle">Transparent, competitive pricing designed for your success</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="pricing-icon"><i class="fas fa-chart-line"></i></div>
+        <h3>Investor Advisory</h3>
+        <p>Comprehensive investment strategy and portfolio management services</p>
+        <p style="font-size: 2rem; font-weight: 900; color: #0071e3; margin: 1.5rem 0;">Custom Quote</p>
+        <p style="color: #64748b; font-size: 0.9rem;">Based on portfolio size and complexity</p>
+        <a href="contact.html" class="btn btn-primary" style="width: 100%; text-align: center; margin-top: 2rem;">Get Quote</a>
+      </div>
+
+      <div class="pricing-card">
+        <div class="pricing-icon"><i class="fas fa-home"></i></div>
+        <h3>Property Management</h3>
+        <p>Full-service property management and tenant relations</p>
+        <p style="font-size: 2rem; font-weight: 900; color: #0071e3; margin: 1.5rem 0;">8-12%</p>
+        <p style="color: #64748b; font-size: 0.9rem;">Of monthly rent collected</p>
+        <a href="contact.html" class="btn btn-primary" style="width: 100%; text-align: center; margin-top: 2rem;">Get Started</a>
+      </div>
+
+      <div class="pricing-card">
+        <div class="pricing-icon"><i class="fas fa-building"></i></div>
+        <h3>Commercial Services</h3>
+        <p>Enterprise solutions for corporate real estate needs</p>
+        <p style="font-size: 2rem; font-weight: 900; color: #0071e3; margin: 1.5rem 0;">Custom Quote</p>
+        <p style="color: #64748b; font-size: 0.9rem;">Based on scope and requirements</p>
+        <a href="contact.html" class="btn btn-primary" style="width: 100%; text-align: center; margin-top: 2rem;">Discuss Pricing</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-content">
+      <h2>Ready to Get Started?</h2>
+      <p>Let our team of experienced professionals help you achieve your real estate goals today.</p>
+      <div class="hero-buttons">
+        <a href="contact.html" class="btn btn-primary">Schedule Consultation</a>
+        <a href="tel:+15195622983" class="btn btn-outline">Call (519) 562-2983</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>Lease Nexus</h3>
+        <p style="line-height: 1.8; color: rgba(255, 255, 255, 0.8);"><strong>1976 McKay Ave</strong><br>Windsor, ON<br><br><strong>Monday - Friday</strong><br>9:00 AM - 6:00 PM</p>
+      </div>
+      <div class="footer-section">
+        <h3>Solutions</h3>
+        <ul>
+          <li><a href="index.html#investors">Investor Advisory</a></li>
+          <li><a href="index.html#landlords">Property Management</a></li>
+          <li><a href="index.html#commercial">Commercial Services</a></li>
+          <li><a href="services.html">All Services</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Navigate</h3>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Contact</h3>
+        <ul>
+          <li><a href="tel:+15195622983">(519) 562-2983</a></li>
+          <li><a href="tel:+12269755741">(226) 975-5741</a></li>
+          <li><a href="mailto:shahido@live.com">shahido@live.com</a></li>
+          <li><a href="mailto:usmansafdar.uos@gmail.com">usmansafdar.uos@gmail.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Lease Nexus. All rights reserved.</p>
+      <p>Strategic Property Management & Investment Advisory Services</p>
+    </div>
+  </footer>
+
+</body>
+</html>

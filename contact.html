@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Lease Nexus | Get in Touch</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .contact-section { padding: 8rem 2rem; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); margin-top: 80px; }
+    .contact-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+    .contact-info { padding: 3rem; background: linear-gradient(135deg, #0071e3 0%, #60a5fa 100%); color: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 113, 227, 0.2); }
+    .contact-info h2 { font-size: 2rem; font-weight: 900; margin-bottom: 2rem; }
+    .contact-item { margin-bottom: 2.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
+    .contact-item:last-child { border-bottom: none; }
+    .contact-item i { font-size: 1.5rem; margin-bottom: 1rem; display: block; }
+    .contact-item h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .contact-item p { color: rgba(255, 255, 255, 0.9); line-height: 1.8; }
+    .contact-item a { color: #ffffff; text-decoration: none; font-weight: 600; }
+    .form-group { margin-bottom: 1.5rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #0f172a; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 10px; font-family: inherit; font-size: 1rem; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #0071e3; box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1); }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .submit-btn { width: 100%; padding: 1.2rem; background: linear-gradient(135deg, #0071e3 0%, #60a5fa 100%); color: white; border: none; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 8px 20px rgba(0, 113, 227, 0.3); }
+    .submit-btn:hover { transform: translateY(-4px); }
+    .form-message { padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem; display: none; }
+    .form-message.success { background: #d1fae5; color: #065f46; display: block; }
+    .form-message.error { background: #fee2e2; color: #991b1b; display: block; }
+    .form-card { background: white; padding: 3rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); border: 1px solid #e2e8f0; }
+    @media (max-width: 768px) { .contact-container { grid-template-columns: 1fr; } .form-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="index.html" class="logo"><i class="fas fa-building"></i> Lease Nexus</a>
+      <ul class="nav-links">
+        <li><a href="index.html#investors">Investors</a></li>
+        <li><a href="index.html#landlords">Landlords</a></li>
+        <li><a href="index.html#commercial">Commercial</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html" class="nav-btn">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="contact-section">
+    <div style="text-align: center; margin-bottom: 4rem;">
+      <h1 class="section-title">Get in Touch</h1>
+      <p class="section-subtitle">Ready to discuss your real estate goals? Reach out to our team today.</p>
+    </div>
+
+    <div class="contact-container">
+      <div class="contact-info">
+        <h2>Contact Information</h2>
+        <div class="contact-item">
+          <i class="fas fa-map-marker-alt"></i>
+          <h3>Address</h3>
+          <p>1976 McKay Ave<br>Windsor, ON, Canada</p>
+        </div>
+        <div class="contact-item">
+          <i class="fas fa-phone"></i>
+          <h3>Phone</h3>
+          <p><a href="tel:+15195622983">(519) 562-2983</a> - Omar<br><a href="tel:+12269755741">(226) 975-5741</a> - Usman</p>
+        </div>
+        <div class="contact-item">
+          <i class="fas fa-envelope"></i>
+          <h3>Email</h3>
+          <p><a href="mailto:shahido@live.com">shahido@live.com</a><br><a href="mailto:usmansafdar.uos@gmail.com">usmansafdar.uos@gmail.com</a></p>
+        </div>
+        <div class="contact-item">
+          <i class="fas fa-clock"></i>
+          <h3>Hours</h3>
+          <p>Monday - Friday<br>9:00 AM - 6:00 PM ET</p>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <h2 style="font-size: 1.8rem; font-weight: 900; margin-bottom: 2rem;">Send us a Message</h2>
+        <div class="form-message" id="formMessage"></div>
+        <form id="contactForm" onsubmit="handleFormSubmit(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name *</label>
+              <input type="text" id="firstName" name="firstName" required>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name *</label>
+              <input type="text" id="lastName" name="lastName" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">Email *</label>
+              <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone *</label>
+              <input type="tel" id="phone" name="phone" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="service">Service Interested In *</label>
+            <select id="service" name="service" required>
+              <option value="">Select a service</option>
+              <option value="investor">Investor Advisory</option>
+              <option value="landlord">Property Management</option>
+              <option value="commercial">Commercial Services</option>
+              <option value="general">General Inquiry</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message">Message *</label>
+            <textarea id="message" name="message" required placeholder="Tell us about your real estate goals..."></textarea>
+          </div>
+          <button type="submit" class="submit-btn" id="submitBtn">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>Lease Nexus</h3>
+        <p style="line-height: 1.8; color: rgba(255, 255, 255, 0.8);"><strong>1976 McKay Ave</strong><br>Windsor, ON<br><br><strong>Monday - Friday</strong><br>9:00 AM - 6:00 PM</p>
+      </div>
+      <div class="footer-section">
+        <h3>Solutions</h3>
+        <ul>
+          <li><a href="index.html#investors">Investor Advisory</a></li>
+          <li><a href="index.html#landlords">Property Management</a></li>
+          <li><a href="index.html#commercial">Commercial Services</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Navigate</h3>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Contact</h3>
+        <ul>
+          <li><a href="tel:+15195622983">(519) 562-2983</a></li>
+          <li><a href="tel:+12269755741">(226) 975-5741</a></li>
+          <li><a href="mailto:shahido@live.com">shahido@live.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Lease Nexus. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : 'https://leasenexus.onrender.com/api';
+    async function handleFormSubmit(event) {
+      event.preventDefault();
+      const submitBtn = document.getElementById('submitBtn');
+      const formMessage = document.getElementById('formMessage');
+      const form = document.getElementById('contactForm');
+      const formData = { firstName: document.getElementById('firstName').value, lastName: document.getElementById('lastName').value, email: document.getElementById('email').value, phone: document.getElementById('phone').value, service: document.getElementById('service').value, message: document.getElementById('message').value };
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+      try {
+        const response = await fetch(`${API_BASE}/contact/submit`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) });
+        if (response.ok) {
+          formMessage.className = 'form-message success';
+          formMessage.textContent = '✓ Message sent successfully!';
+          form.reset();
+        } else { throw new Error('Failed'); }
+      } catch (error) {
+        formMessage.className = 'form-message error';
+        formMessage.textContent = '✗ Error. Please try again or call us.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Message';
+      }
+    }
+  </script>
+</body>
+</html>
